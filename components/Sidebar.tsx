@@ -12,6 +12,13 @@ interface SidebarProps {
   userAvatar?: string;
 }
 
+interface MenuItem {
+  icon: string;
+  label: string;
+  href: string;
+  subItems?: { icon: string; label: string; href: string }[];
+}
+
 export default function Sidebar({
   userType = "admin",
   userName,
@@ -23,17 +30,45 @@ export default function Sidebar({
 
   const adminMenuItems = [
     { icon: "dashboard", label: "Dashboard", href: "/admin/dashboard" },
-    { icon: "group", label: "Patients", href: "/admin/patients" },
+    { 
+      icon: "group", 
+      label: "Patients", 
+      href: "/admin/patients",
+      subItems: [
+        { icon: "person", label: "Profile", href: "/admin/patients/profile" },
+        { icon: "queue", label: "Queue", href: "/admin/patients/queue" },
+        { icon: "history", label: "History", href: "/admin/patients/history" },
+      ]
+    },
     { icon: "stethoscope", label: "Doctors", href: "/admin/doctors" },
     {
       icon: "calendar_month",
       label: "Appointments",
       href: "/admin/appointments",
+      subItems: [
+        { icon: "add", label: "Create", href: "/admin/appointments/create" },
+        { icon: "event_available", label: "Status", href: "/admin/appointments/status" },
+      ]
     },
     {
       icon: "receipt_long",
       label: "Billing & Invoices",
       href: "/admin/billing",
+    },
+    {
+      icon: "local_pharmacy",
+      label: "Pharmacy",
+      href: "/pharmacy/billing",
+    },
+    {
+      icon: "science",
+      label: "Lab",
+      href: "/lab/dashboard",
+    },
+    {
+      icon: "bed",
+      label: "Bed Management",
+      href: "/admin/beds/availability",
     },
   ];
 
@@ -62,7 +97,12 @@ export default function Sidebar({
         ? doctorMenuItems
         : receptionistMenuItems;
 
-  const isActive = (href: string) => pathname === href;
+  const isActive = (href: string) => {
+    if (pathname === href) return true;
+    // Check if pathname starts with href (for parent routes)
+    if (pathname.startsWith(href + "/")) return true;
+    return false;
+  };
 
   return (
     <aside className="flex w-64 flex-col bg-white dark:bg-black/20 p-4 border-r border-gray-200 dark:border-gray-800">
@@ -135,39 +175,66 @@ export default function Sidebar({
         )}
 
         <div className="flex flex-col gap-2 mt-4">
-          {menuItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg ${
-                isActive(item.href)
-                  ? "bg-primary/20 text-[#111816] dark:text-white"
-                  : "hover:bg-primary/10"
-              }`}
-            >
-              <span
-                className={`material-symbols-outlined text-[#111816] dark:text-gray-300 ${
-                  isActive(item.href) ? "fill" : ""
-                }`}
-                style={
-                  isActive(item.href)
-                    ? { fontVariationSettings: "'FILL' 1, 'wght' 400" }
-                    : { fontVariationSettings: "'FILL' 0, 'wght' 400" }
-                }
-              >
-                {item.icon}
-              </span>
-              <p
-                className={`text-sm leading-normal ${
-                  isActive(item.href)
-                    ? "font-bold text-[#111816] dark:text-white"
-                    : "font-medium text-[#111816] dark:text-gray-300"
-                }`}
-              >
-                {item.label}
-              </p>
-            </Link>
-          ))}
+          {menuItems.map((item) => {
+            const menuItem = item as MenuItem;
+            const hasSubItems = menuItem.subItems && menuItem.subItems.length > 0;
+            const isItemActive = isActive(menuItem.href);
+            
+            return (
+              <div key={menuItem.href} className="flex flex-col">
+                <Link
+                  href={menuItem.href}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg ${
+                    isItemActive
+                      ? "bg-primary/20 text-[#111816] dark:text-white"
+                      : "hover:bg-primary/10"
+                  }`}
+                >
+                  <span
+                    className={`material-symbols-outlined text-[#111816] dark:text-gray-300 ${
+                      isItemActive ? "fill" : ""
+                    }`}
+                    style={
+                      isItemActive
+                        ? { fontVariationSettings: "'FILL' 1, 'wght' 400" }
+                        : { fontVariationSettings: "'FILL' 0, 'wght' 400" }
+                    }
+                  >
+                    {menuItem.icon}
+                  </span>
+                  <p
+                    className={`text-sm leading-normal flex-1 ${
+                      isItemActive
+                        ? "font-bold text-[#111816] dark:text-white"
+                        : "font-medium text-[#111816] dark:text-gray-300"
+                    }`}
+                  >
+                    {menuItem.label}
+                  </p>
+                </Link>
+                {hasSubItems && isItemActive && (
+                  <div className="ml-4 mt-1 flex flex-col gap-1 border-l-2 border-primary/30 pl-3">
+                    {menuItem.subItems!.map((subItem) => (
+                      <Link
+                        key={subItem.href}
+                        href={subItem.href}
+                        className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-xs ${
+                          pathname === subItem.href
+                            ? "bg-primary/10 text-primary font-semibold"
+                            : "text-gray-600 dark:text-gray-400 hover:bg-primary/5"
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-sm">
+                          {subItem.icon}
+                        </span>
+                        <span>{subItem.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
