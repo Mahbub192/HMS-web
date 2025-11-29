@@ -1,9 +1,9 @@
 "use client";
 
+import { getActiveModule, moduleMenus } from "@/utils/moduleMenus";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getActiveModule, moduleMenus } from "@/utils/moduleMenus";
 
 interface SidebarProps {
   userType?: "admin" | "doctor" | "receptionist";
@@ -30,15 +30,15 @@ export default function Sidebar({
 
   const adminMenuItems = [
     { icon: "dashboard", label: "Dashboard", href: "/admin/dashboard" },
-    { 
-      icon: "group", 
-      label: "Patients", 
+    {
+      icon: "group",
+      label: "Patients",
       href: "/admin/patients",
       subItems: [
-        { icon: "person", label: "Profile", href: "/admin/patients/profile" },
+        // { icon: "person", label: "Profile", href: "/admin/patients/profile" },
         { icon: "queue", label: "Queue", href: "/admin/patients/queue" },
-        { icon: "history", label: "History", href: "/admin/patients/history" },
-      ]
+        // { icon: "history", label: "History", href: "/admin/patients/history" },
+      ],
     },
     { icon: "stethoscope", label: "Doctors", href: "/admin/doctors" },
     {
@@ -47,8 +47,12 @@ export default function Sidebar({
       href: "/admin/appointments",
       subItems: [
         { icon: "add", label: "Create", href: "/admin/appointments/create" },
-        { icon: "event_available", label: "Status", href: "/admin/appointments/status" },
-      ]
+        {
+          icon: "event_available",
+          label: "Status",
+          href: "/admin/appointments/status",
+        },
+      ],
     },
     {
       icon: "receipt_long",
@@ -83,7 +87,11 @@ export default function Sidebar({
   const receptionistMenuItems = [
     { icon: "dashboard", label: "Dashboard", href: "/receptionist/dashboard" },
     { icon: "group", label: "Patients", href: "/receptionist/patients" },
-    { icon: "calendar_month", label: "Appointments", href: "/receptionist/appointments" },
+    {
+      icon: "calendar_month",
+      label: "Appointments",
+      href: "/receptionist/appointments",
+    },
     { icon: "credit_card", label: "Billing", href: "/receptionist/billing" },
     { icon: "bar_chart", label: "Reports", href: "/receptionist/reports" },
   ];
@@ -92,10 +100,10 @@ export default function Sidebar({
   const menuItems = activeModule
     ? moduleMenus[activeModule] || adminMenuItems
     : userType === "admin"
-      ? adminMenuItems
-      : userType === "doctor"
-        ? doctorMenuItems
-        : receptionistMenuItems;
+    ? adminMenuItems
+    : userType === "doctor"
+    ? doctorMenuItems
+    : receptionistMenuItems;
 
   const isActive = (href: string) => {
     if (pathname === href) return true;
@@ -132,15 +140,15 @@ export default function Sidebar({
                     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                     .join(" ")
                 : userType === "admin"
-                  ? "HMS"
-                  : "HMS Portal"}
+                ? "HMS"
+                : "HMS Portal"}
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">
               {activeModule
                 ? "Module Navigation"
                 : userType === "admin"
-                  ? "Hospital Management"
-                  : ""}
+                ? "Hospital Management"
+                : ""}
             </p>
           </div>
         </div>
@@ -177,9 +185,10 @@ export default function Sidebar({
         <div className="flex flex-col gap-2 mt-4">
           {menuItems.map((item) => {
             const menuItem = item as MenuItem;
-            const hasSubItems = menuItem.subItems && menuItem.subItems.length > 0;
+            const hasSubItems =
+              menuItem.subItems && menuItem.subItems.length > 0;
             const isItemActive = isActive(menuItem.href);
-            
+
             return (
               <div key={menuItem.href} className="flex flex-col">
                 <Link
