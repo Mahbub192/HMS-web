@@ -3,52 +3,171 @@
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+// Sample patient data - In real app, this would come from API
+const getPatientData = (id: string) => {
+  const patients: Record<string, any> = {
+    "P-843592": {
+      id: "P-843592",
+      name: "Isabella Rossi",
+      avatar:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuAf9gNiZOODiRboXanpIi0-ZlnmDlmzFy-_c5HoMm8Kc7v1D6wFQlz2cUEAIUUFIL4IvpSqaMe1sS-Q_YaNf8bgsdceBs9xr5GV8DFt0C4XfFgAsdgJw2IzS5dKbuR5Zu0n2uejhSUmEqxy8hcCZN9tN9bMH6bj3VVise1RlM82dKgtJgxQzQY4PKRaRArmZgVfS9WyTLdaCkDvZUfSGMpgckA_bRl5RBq7HwGhgnstxTzvYmunPaVLl0lZRrdh3qwWrztWWUbxx0iw",
+      firstName: "Isabella",
+      middleName: "",
+      lastName: "Rossi",
+      dateOfBirth: "1990-05-15",
+      gender: "Female",
+      bloodType: "O+",
+      maritalStatus: "Married",
+      email: "isabella.rossi@example.com",
+      phone: "+1 (555) 123-4567",
+      alternatePhone: "+1 (555) 987-6543",
+      address: "123 Main Street",
+      city: "New York",
+      state: "NY",
+      zipCode: "10001",
+      country: "United States",
+      insuranceProvider: "Blue Cross Blue Shield",
+      insurancePolicyNumber: "BCBS-123456789",
+      insuranceGroupNumber: "GRP-987654",
+      insuranceEffectiveDate: "2023-01-01",
+      insuranceExpiryDate: "2024-12-31",
+      insuranceType: "Primary",
+      emergencyContact1Name: "Marco Rossi",
+      emergencyContact1Relationship: "Spouse",
+      emergencyContact1Phone: "+1 (555) 234-5678",
+      emergencyContact1Address: "123 Main Street, New York, NY 10001",
+      emergencyContact2Name: "Sophia Rossi",
+      emergencyContact2Relationship: "Daughter",
+      emergencyContact2Phone: "+1 (555) 345-6789",
+      emergencyContact2Address: "456 Oak Avenue, New York, NY 10002",
+      status: "Active, In-Patient",
+    },
+    "P-789012": {
+      id: "P-789012",
+      name: "Jameson Smith",
+      avatar:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuDwDz8fMTdNfZOoOrBHpwGRWu8Hr0Qqb8epOnqcqiUp4vdQvW-lNGMWmfZsG930CQvoRPVkskbhcOXqGXfh4EDGWFpdvj0S2aXklUkvasF0BpS40OK7ExKYNJHq1r038hMDKJ9Fa9xzCN81qZl1j6AwVCD0e9XP46JIDYx9RetNVaPnYKLETvjxs5dmtkYDVMCfePALXryAvLhFSxEqEszc0yx2BuXLwZZRqqC5OjFoG5Vzzv3lE1RsOYU6AjRuCif7eBNOllriUV52",
+      firstName: "Jameson",
+      middleName: "",
+      lastName: "Smith",
+      dateOfBirth: "1981-03-20",
+      gender: "Male",
+      bloodType: "O+",
+      maritalStatus: "Married",
+      email: "jameson.smith@example.com",
+      phone: "+1 (555) 234-5678",
+      alternatePhone: "",
+      address: "456 Oak Avenue",
+      city: "New York",
+      state: "NY",
+      zipCode: "10002",
+      country: "United States",
+      insuranceProvider: "Aetna",
+      insurancePolicyNumber: "AET-987654321",
+      insuranceGroupNumber: "GRP-123456",
+      insuranceEffectiveDate: "2023-06-01",
+      insuranceExpiryDate: "2024-05-31",
+      insuranceType: "Primary",
+      emergencyContact1Name: "Sarah Smith",
+      emergencyContact1Relationship: "Spouse",
+      emergencyContact1Phone: "+1 (555) 234-5679",
+      emergencyContact1Address: "456 Oak Avenue, New York, NY 10002",
+      emergencyContact2Name: "John Smith",
+      emergencyContact2Relationship: "Brother",
+      emergencyContact2Phone: "+1 (555) 234-5680",
+      emergencyContact2Address: "789 Pine Street, New York, NY 10003",
+      status: "Active, Out-Patient",
+    },
+  };
+  return patients[id] || patients["P-843592"];
+};
 
 export default function PatientProfilePage() {
+  const params = useParams();
+  const router = useRouter();
+  const patientId = params.id as string;
   const [activeTab, setActiveTab] = useState("basic");
   const [isEditing, setIsEditing] = useState(false);
+  const [patientData, setPatientData] = useState<any>(null);
 
-  // Form state
+  useEffect(() => {
+    const data = getPatientData(patientId);
+    setPatientData(data);
+  }, [patientId]);
+
   const [formData, setFormData] = useState({
-    // Basic Information
-    firstName: "Isabella",
+    firstName: "",
     middleName: "",
-    lastName: "Rossi",
-    dateOfBirth: "1990-05-15",
-    gender: "Female",
-    bloodType: "O+",
-    maritalStatus: "Married",
-
-    // Contact Details
-    email: "isabella.rossi@example.com",
-    phone: "+1 (555) 123-4567",
-    alternatePhone: "+1 (555) 987-6543",
-    address: "123 Main Street",
-    city: "New York",
-    state: "NY",
-    zipCode: "10001",
-    country: "United States",
-
-    // Insurance
-    insuranceProvider: "Blue Cross Blue Shield",
-    insurancePolicyNumber: "BCBS-123456789",
-    insuranceGroupNumber: "GRP-987654",
-    insuranceEffectiveDate: "2023-01-01",
-    insuranceExpiryDate: "2024-12-31",
-    insuranceType: "Primary",
-
-    // Emergency Contacts
-    emergencyContact1Name: "Marco Rossi",
-    emergencyContact1Relationship: "Spouse",
-    emergencyContact1Phone: "+1 (555) 234-5678",
-    emergencyContact1Address: "123 Main Street, New York, NY 10001",
-
-    emergencyContact2Name: "Sophia Rossi",
-    emergencyContact2Relationship: "Daughter",
-    emergencyContact2Phone: "+1 (555) 345-6789",
-    emergencyContact2Address: "456 Oak Avenue, New York, NY 10002",
+    lastName: "",
+    dateOfBirth: "",
+    gender: "",
+    bloodType: "",
+    maritalStatus: "",
+    email: "",
+    phone: "",
+    alternatePhone: "",
+    address: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "",
+    insuranceProvider: "",
+    insurancePolicyNumber: "",
+    insuranceGroupNumber: "",
+    insuranceEffectiveDate: "",
+    insuranceExpiryDate: "",
+    insuranceType: "",
+    emergencyContact1Name: "",
+    emergencyContact1Relationship: "",
+    emergencyContact1Phone: "",
+    emergencyContact1Address: "",
+    emergencyContact2Name: "",
+    emergencyContact2Relationship: "",
+    emergencyContact2Phone: "",
+    emergencyContact2Address: "",
   });
+
+  useEffect(() => {
+    if (patientData) {
+      setFormData({
+        firstName: patientData.firstName || "",
+        middleName: patientData.middleName || "",
+        lastName: patientData.lastName || "",
+        dateOfBirth: patientData.dateOfBirth || "",
+        gender: patientData.gender || "",
+        bloodType: patientData.bloodType || "",
+        maritalStatus: patientData.maritalStatus || "",
+        email: patientData.email || "",
+        phone: patientData.phone || "",
+        alternatePhone: patientData.alternatePhone || "",
+        address: patientData.address || "",
+        city: patientData.city || "",
+        state: patientData.state || "",
+        zipCode: patientData.zipCode || "",
+        country: patientData.country || "",
+        insuranceProvider: patientData.insuranceProvider || "",
+        insurancePolicyNumber: patientData.insurancePolicyNumber || "",
+        insuranceGroupNumber: patientData.insuranceGroupNumber || "",
+        insuranceEffectiveDate: patientData.insuranceEffectiveDate || "",
+        insuranceExpiryDate: patientData.insuranceExpiryDate || "",
+        insuranceType: patientData.insuranceType || "",
+        emergencyContact1Name: patientData.emergencyContact1Name || "",
+        emergencyContact1Relationship:
+          patientData.emergencyContact1Relationship || "",
+        emergencyContact1Phone: patientData.emergencyContact1Phone || "",
+        emergencyContact1Address: patientData.emergencyContact1Address || "",
+        emergencyContact2Name: patientData.emergencyContact2Name || "",
+        emergencyContact2Relationship:
+          patientData.emergencyContact2Relationship || "",
+        emergencyContact2Phone: patientData.emergencyContact2Phone || "",
+        emergencyContact2Address: patientData.emergencyContact2Address || "",
+      });
+    }
+  }, [patientData]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -61,7 +180,6 @@ export default function PatientProfilePage() {
   };
 
   const handleSave = () => {
-    // TODO: Implement save functionality
     console.log("Saving patient data:", formData);
     setIsEditing(false);
     alert("Patient information saved successfully!");
@@ -74,6 +192,20 @@ export default function PatientProfilePage() {
     { id: "emergency", label: "Emergency Contacts" },
   ];
 
+  if (!patientData) {
+    return (
+      <div className="relative flex min-h-screen w-full bg-background-light dark:bg-background-dark">
+        <Sidebar userType="admin" />
+        <main className="flex-1 flex flex-col">
+          <Header />
+          <div className="flex-1 p-8 flex items-center justify-center">
+            <p className="text-gray-500">Loading patient data...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex min-h-screen w-full bg-background-light dark:bg-background-dark text-[#111816] dark:text-gray-200">
       <Sidebar userType="admin" />
@@ -81,6 +213,28 @@ export default function PatientProfilePage() {
         <Header />
         <div className="flex-1 p-8 overflow-y-auto">
           <div className="w-full max-w-7xl mx-auto">
+            {/* Breadcrumbs */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              <Link
+                href="/admin/patients"
+                className="text-gray-500 dark:text-gray-400 hover:text-primary text-base font-medium leading-normal"
+              >
+                Patients
+              </Link>
+              <span className="text-gray-500 dark:text-gray-400 text-base font-medium leading-normal">
+                /
+              </span>
+              <span className="text-[#111816] dark:text-white text-base font-medium leading-normal">
+                {patientData.name}
+              </span>
+              <span className="text-gray-500 dark:text-gray-400 text-base font-medium leading-normal">
+                /
+              </span>
+              <span className="text-[#111816] dark:text-white text-base font-medium leading-normal">
+                Profile
+              </span>
+            </div>
+
             {/* Page Heading */}
             <div className="flex flex-wrap justify-between items-center gap-4 mb-8">
               <div className="flex flex-col">
@@ -91,10 +245,19 @@ export default function PatientProfilePage() {
                   Manage and review patient information.
                 </p>
               </div>
-              <button className="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-primary text-background-dark text-sm font-bold leading-normal tracking-[0.015em]">
-                <span className="material-symbols-outlined">add</span>
-                <span className="truncate">Add New Patient</span>
-              </button>
+              <div className="flex gap-2">
+                <Link
+                  href={`/admin/patients/${patientId}/history`}
+                  className="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-primary/20 text-[#111816] dark:text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/30 transition-colors"
+                >
+                  <span className="material-symbols-outlined">history</span>
+                  <span className="truncate">View History</span>
+                </Link>
+                <button className="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-10 px-4 bg-primary text-background-dark text-sm font-bold leading-normal tracking-[0.015em]">
+                  <span className="material-symbols-outlined">add</span>
+                  <span className="truncate">Add New Patient</span>
+                </button>
+              </div>
             </div>
 
             <div className="bg-white dark:bg-[#1a2c26] rounded-xl shadow-sm p-4 sm:p-6">
@@ -103,21 +266,21 @@ export default function PatientProfilePage() {
                 <div className="flex items-center gap-4">
                   <div className="relative h-24 w-24 md:h-32 md:w-32 rounded-full overflow-hidden flex-shrink-0">
                     <Image
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuAf9gNiZOODiRboXanpIi0-ZlnmDlmzFy-_c5HoMm8Kc7v1D6wFQlz2cUEAIUUFIL4IvpSqaMe1sS-Q_YaNf8bgsdceBs9xr5GV8DFt0C4XfFgAsdgJw2IzS5dKbuR5Zu0n2uejhSUmEqxy8hcCZN9tN9bMH6bj3VVise1RlM82dKgtJgxQzQY4PKRaRArmZgVfS9WyTLdaCkDvZUfSGMpgckA_bRl5RBq7HwGhgnstxTzvYmunPaVLl0lZRrdh3qwWrztWWUbxx0iw"
-                      alt="Isabella Rossi"
+                      src={patientData.avatar}
+                      alt={patientData.name}
                       fill
                       className="object-cover"
                     />
                   </div>
                   <div className="flex flex-col justify-center">
                     <p className="text-[#111816] dark:text-white text-2xl font-bold leading-tight tracking-[-0.015em]">
-                      {formData.firstName} {formData.lastName}
+                      {patientData.name}
                     </p>
                     <p className="text-[#61897c] dark:text-[#a0b8b1] text-base font-normal leading-normal">
-                      Patient ID: P-843592
+                      Patient ID: {patientData.id}
                     </p>
                     <p className="text-[#61897c] dark:text-[#a0b8b1] text-base font-normal leading-normal">
-                      Status: Active, In-Patient
+                      Status: {patientData.status}
                     </p>
                   </div>
                 </div>
@@ -169,7 +332,7 @@ export default function PatientProfilePage() {
                 </div>
               </div>
 
-              {/* Form Content */}
+              {/* Form Content - Same as before but using formData state */}
               <div className="pt-6">
                 {/* Basic Information Tab */}
                 {activeTab === "basic" && (
