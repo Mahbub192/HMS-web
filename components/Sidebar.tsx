@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getActiveModule, moduleMenus } from "@/utils/moduleMenus";
 
 interface SidebarProps {
   userType?: "admin" | "doctor" | "receptionist";
@@ -18,6 +19,7 @@ export default function Sidebar({
   userAvatar,
 }: SidebarProps) {
   const pathname = usePathname();
+  const activeModule = getActiveModule(pathname);
 
   const adminMenuItems = [
     { icon: "dashboard", label: "Dashboard", href: "/admin/dashboard" },
@@ -43,7 +45,22 @@ export default function Sidebar({
     { icon: "settings", label: "Settings", href: "/doctor/settings" },
   ];
 
-  const menuItems = userType === "admin" ? adminMenuItems : doctorMenuItems;
+  const receptionistMenuItems = [
+    { icon: "dashboard", label: "Dashboard", href: "/receptionist/dashboard" },
+    { icon: "group", label: "Patients", href: "/receptionist/patients" },
+    { icon: "calendar_month", label: "Appointments", href: "/receptionist/appointments" },
+    { icon: "credit_card", label: "Billing", href: "/receptionist/billing" },
+    { icon: "bar_chart", label: "Reports", href: "/receptionist/reports" },
+  ];
+
+  // Use module-specific menu if in a module route, otherwise use role-based menu
+  const menuItems = activeModule
+    ? moduleMenus[activeModule] || adminMenuItems
+    : userType === "admin"
+      ? adminMenuItems
+      : userType === "doctor"
+        ? doctorMenuItems
+        : receptionistMenuItems;
 
   const isActive = (href: string) => pathname === href;
 
@@ -69,10 +86,21 @@ export default function Sidebar({
           )}
           <div className="flex flex-col">
             <h1 className="text-[#111816] dark:text-white text-base font-bold leading-normal">
-              {userType === "admin" ? "HMS" : "HMS Portal"}
+              {activeModule
+                ? activeModule
+                    .split("-")
+                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                    .join(" ")
+                : userType === "admin"
+                  ? "HMS"
+                  : "HMS Portal"}
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm font-normal leading-normal">
-              {userType === "admin" ? "Hospital Management" : ""}
+              {activeModule
+                ? "Module Navigation"
+                : userType === "admin"
+                  ? "Hospital Management"
+                  : ""}
             </p>
           </div>
         </div>
