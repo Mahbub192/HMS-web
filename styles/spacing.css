@@ -1,0 +1,77 @@
+/* Spacing Utilities */
+
+/* Padding */
+.p-xs {
+  padding: 0.25rem;
+}
+
+.p-sm {
+  padding: 0.5rem;
+}
+
+.p-md {
+  padding: 1rem;
+}
+
+.p-lg {
+  padding: 1.5rem;
+}
+
+.p-xl {
+  padding: 2rem;
+}
+
+.p-2xl {
+  padding: 3rem;
+}
+
+/* Margin */
+.m-xs {
+  margin: 0.25rem;
+}
+
+.m-sm {
+  margin: 0.5rem;
+}
+
+.m-md {
+  margin: 1rem;
+}
+
+.m-lg {
+  margin: 1.5rem;
+}
+
+.m-xl {
+  margin: 2rem;
+}
+
+.m-2xl {
+  margin: 3rem;
+}
+
+/* Gap */
+.gap-xs {
+  gap: 0.25rem;
+}
+
+.gap-sm {
+  gap: 0.5rem;
+}
+
+.gap-md {
+  gap: 1rem;
+}
+
+.gap-lg {
+  gap: 1.5rem;
+}
+
+.gap-xl {
+  gap: 2rem;
+}
+
+.gap-2xl {
+  gap: 3rem;
+}
+
