@@ -18,6 +18,7 @@ export const moduleMenus: Record<string, MenuItem[]> = {
     { icon: "dashboard", label: "Overview", href: "/modules/hospital" },
     { icon: "local_hospital", label: "Departments", href: "/modules/hospital/departments" },
     { icon: "bed", label: "Wards", href: "/modules/hospital/wards" },
+    { icon: "science", label: "Lab Reports", href: "/modules/hospital/lab-reports" },
     { icon: "settings", label: "Hospital Settings", href: "/modules/hospital/settings" },
     { icon: "info", label: "Hospital Info", href: "/modules/hospital/info" },
   ],
