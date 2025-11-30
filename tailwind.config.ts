@@ -19,6 +19,13 @@ const config: Config = {
         "very-light-grey": "#F8F9FA",
         "dark-grey": "#333333",
         "medium-grey": "#ADB5BD",
+        "primary-blue": "#4A90E2",
+        "secondary-gray": "#F4F7FA",
+        "border-color": "#EAEAEA",
+        "accent-green": "#50E3C2",
+        "accent-red": "#D0021B",
+        "accent-amber": "#F5A623",
+        "text-dark": "#333333",
       },
       fontFamily: {
         display: ["Inter", "sans-serif"],
