@@ -112,6 +112,16 @@ export default function Sidebar({
     return false;
   };
 
+  const isParentActive = (item: MenuItem) => {
+    if (item.href === pathname) return true;
+    if (pathname.startsWith(item.href + "/")) return true;
+    // Check if any sub-item is active
+    if (item.subItems) {
+      return item.subItems.some((sub) => pathname === sub.href || pathname.startsWith(sub.href + "/"));
+    }
+    return false;
+  };
+
   return (
     <aside className="flex w-64 flex-col bg-white dark:bg-black/20 p-4 border-r border-gray-200 dark:border-gray-800">
       <div className="flex flex-col gap-4">
@@ -187,7 +197,7 @@ export default function Sidebar({
             const menuItem = item as MenuItem;
             const hasSubItems =
               menuItem.subItems && menuItem.subItems.length > 0;
-            const isItemActive = isActive(menuItem.href);
+            const isItemActive = isParentActive(menuItem);
 
             return (
               <div key={menuItem.href} className="flex flex-col">

@@ -4,6 +4,7 @@ export interface MenuItem {
   icon: string;
   label: string;
   href: string;
+  subItems?: { icon: string; label: string; href: string }[];
 }
 
 export const moduleMenus: Record<string, MenuItem[]> = {
@@ -19,6 +20,24 @@ export const moduleMenus: Record<string, MenuItem[]> = {
     { icon: "local_hospital", label: "Departments", href: "/modules/hospital/departments" },
     { icon: "bed", label: "Wards", href: "/modules/hospital/wards" },
     { icon: "science", label: "Lab Reports", href: "/modules/hospital/lab-reports" },
+    {
+      icon: "schedule",
+      label: "IPD Service",
+      href: "/modules/hospital/ipd",
+      subItems: [
+        { icon: "person_add", label: "Admission", href: "/modules/hospital/ipd/admission" },
+        { icon: "medical_services", label: "Procedure Entry", href: "/modules/hospital/ipd/procedure-entry" },
+        { icon: "payments", label: "Advance Collection", href: "/modules/hospital/ipd/advance-collection" },
+        { icon: "money_off", label: "Refund Amount", href: "/modules/hospital/ipd/refund" },
+        { icon: "bed", label: "Bed Change", href: "/modules/hospital/ipd/bed-change" },
+        { icon: "logout", label: "Discharge", href: "/modules/hospital/ipd/discharge" },
+        { icon: "account_balance_wallet", label: "IPD Due Collection", href: "/modules/hospital/ipd/due-collection" },
+        { icon: "block", label: "Blocked Patient", href: "/modules/hospital/ipd/blocked-patient" },
+        { icon: "transfer_within_a_station", label: "Patient Transfer", href: "/modules/hospital/ipd/patient-transfer" },
+        { icon: "hotel", label: "Bed Settlement", href: "/modules/hospital/ipd/bed-settlement" },
+        { icon: "check_circle", label: "Approve Block Patient", href: "/modules/hospital/ipd/approve-block" },
+      ],
+    },
     { icon: "settings", label: "Hospital Settings", href: "/modules/hospital/settings" },
     { icon: "info", label: "Hospital Info", href: "/modules/hospital/info" },
   ],
