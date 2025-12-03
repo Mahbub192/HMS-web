@@ -10,77 +10,248 @@ export interface MenuItem {
 export const moduleMenus: Record<string, MenuItem[]> = {
   registration: [
     { icon: "dashboard", label: "Overview", href: "/modules/registration" },
-    { icon: "person_add", label: "New Registration", href: "/modules/registration/new" },
-    { icon: "groups", label: "Registered Patients", href: "/modules/registration/patients" },
-    { icon: "history", label: "Registration History", href: "/modules/registration/history" },
-    { icon: "description", label: "Forms", href: "/modules/registration/forms" },
+    {
+      icon: "person_add",
+      label: "New Registration",
+      href: "/modules/registration/new",
+    },
+    {
+      icon: "groups",
+      label: "Registered Patients",
+      href: "/modules/registration/patients",
+    },
+    {
+      icon: "history",
+      label: "Registration History",
+      href: "/modules/registration/history",
+    },
+    {
+      icon: "description",
+      label: "Forms",
+      href: "/modules/registration/forms",
+    },
   ],
   hospital: [
     { icon: "dashboard", label: "Overview", href: "/modules/hospital" },
-    { icon: "local_hospital", label: "Departments", href: "/modules/hospital/departments" },
+    {
+      icon: "local_hospital",
+      label: "Departments",
+      href: "/modules/hospital/departments",
+    },
     { icon: "bed", label: "Wards", href: "/modules/hospital/wards" },
-    { icon: "science", label: "Lab Reports", href: "/modules/hospital/lab-reports" },
+    {
+      icon: "science",
+      label: "Lab Reports",
+      href: "/modules/hospital/lab-reports",
+    },
     {
       icon: "schedule",
       label: "IPD Service",
       href: "/modules/hospital/ipd",
       subItems: [
-        { icon: "person_add", label: "Admission", href: "/modules/hospital/ipd/admission" },
-        { icon: "medical_services", label: "Procedure Entry", href: "/modules/hospital/ipd/procedure-entry" },
-        { icon: "payments", label: "Advance Collection", href: "/modules/hospital/ipd/advance-collection" },
-        { icon: "money_off", label: "Refund Amount", href: "/modules/hospital/ipd/refund" },
-        { icon: "bed", label: "Bed Change", href: "/modules/hospital/ipd/bed-change" },
-        { icon: "logout", label: "Discharge", href: "/modules/hospital/ipd/discharge" },
-        { icon: "account_balance_wallet", label: "IPD Due Collection", href: "/modules/hospital/ipd/due-collection" },
-        { icon: "block", label: "Blocked Patient", href: "/modules/hospital/ipd/blocked-patient" },
-        { icon: "transfer_within_a_station", label: "Patient Transfer", href: "/modules/hospital/ipd/patient-transfer" },
-        { icon: "hotel", label: "Bed Settlement", href: "/modules/hospital/ipd/bed-settlement" },
-        { icon: "check_circle", label: "Approve Block Patient", href: "/modules/hospital/ipd/approve-block" },
+        {
+          icon: "person_add",
+          label: "Admission",
+          href: "/modules/hospital/ipd/admission",
+        },
+        {
+          icon: "medical_services",
+          label: "Procedure Entry",
+          href: "/modules/hospital/ipd/procedure-entry",
+        },
+        {
+          icon: "payments",
+          label: "Advance Collection",
+          href: "/modules/hospital/ipd/advance-collection",
+        },
+        {
+          icon: "money_off",
+          label: "Refund Amount",
+          href: "/modules/hospital/ipd/refund",
+        },
+        {
+          icon: "bed",
+          label: "Bed Change",
+          href: "/modules/hospital/ipd/bed-change",
+        },
+        {
+          icon: "logout",
+          label: "Discharge",
+          href: "/modules/hospital/ipd/discharge",
+        },
+        {
+          icon: "account_balance_wallet",
+          label: "IPD Due Collection",
+          href: "/modules/hospital/ipd/due-collection",
+        },
+        {
+          icon: "block",
+          label: "Blocked Patient",
+          href: "/modules/hospital/ipd/blocked-patient",
+        },
+        {
+          icon: "transfer_within_a_station",
+          label: "Patient Transfer",
+          href: "/modules/hospital/ipd/patient-transfer",
+        },
+        {
+          icon: "hotel",
+          label: "Bed Settlement",
+          href: "/modules/hospital/ipd/bed-settlement",
+        },
+        {
+          icon: "check_circle",
+          label: "Approve Block Patient",
+          href: "/modules/hospital/ipd/approve-block",
+        },
       ],
     },
-    { icon: "settings", label: "Hospital Settings", href: "/modules/hospital/settings" },
+    {
+      icon: "local_hospital",
+      label: "Nurse Section",
+      href: "/modules/hospital/nurse",
+      subItems: [
+        {
+          icon: "medication",
+          label: "Medicine Requisition-IPD",
+          href: "/modules/hospital/nurse/medicine-requisition-ipd",
+        },
+        {
+          icon: "medication",
+          label: "Medicine Requisition-OPD",
+          href: "/modules/hospital/nurse/medicine-requisition-opd",
+        },
+        {
+          icon: "science",
+          label: "Investigation",
+          href: "/modules/hospital/nurse/investigation",
+        },
+        {
+          icon: "receipt_long",
+          label: "Billing Information",
+          href: "/modules/hospital/nurse/billing-information",
+        },
+      ],
+    },
+    {
+      icon: "settings",
+      label: "Hospital Settings",
+      href: "/modules/hospital/settings",
+    },
     { icon: "info", label: "Hospital Info", href: "/modules/hospital/info" },
   ],
   diagnosis: [
     { icon: "dashboard", label: "Overview", href: "/modules/diagnosis" },
-    { icon: "medical_services", label: "New Diagnosis", href: "/modules/diagnosis/new" },
-    { icon: "history", label: "Diagnosis History", href: "/modules/diagnosis/history" },
-    { icon: "folder", label: "Diagnosis Records", href: "/modules/diagnosis/records" },
-    { icon: "assessment", label: "Reports", href: "/modules/diagnosis/reports" },
+    {
+      icon: "medical_services",
+      label: "New Diagnosis",
+      href: "/modules/diagnosis/new",
+    },
+    {
+      icon: "history",
+      label: "Diagnosis History",
+      href: "/modules/diagnosis/history",
+    },
+    {
+      icon: "folder",
+      label: "Diagnosis Records",
+      href: "/modules/diagnosis/records",
+    },
+    {
+      icon: "assessment",
+      label: "Reports",
+      href: "/modules/diagnosis/reports",
+    },
   ],
   emergency: [
     { icon: "dashboard", label: "Overview", href: "/modules/emergency" },
-    { icon: "emergency", label: "Active Cases", href: "/modules/emergency/active" },
-    { icon: "add_circle", label: "New Emergency", href: "/modules/emergency/new" },
-    { icon: "schedule", label: "Triage Queue", href: "/modules/emergency/triage" },
-    { icon: "history", label: "Emergency History", href: "/modules/emergency/history" },
+    {
+      icon: "emergency",
+      label: "Active Cases",
+      href: "/modules/emergency/active",
+    },
+    {
+      icon: "add_circle",
+      label: "New Emergency",
+      href: "/modules/emergency/new",
+    },
+    {
+      icon: "schedule",
+      label: "Triage Queue",
+      href: "/modules/emergency/triage",
+    },
+    {
+      icon: "history",
+      label: "Emergency History",
+      href: "/modules/emergency/history",
+    },
   ],
   "opd-service": [
     { icon: "dashboard", label: "Overview", href: "/modules/opd-service" },
-    { icon: "medical_information", label: "OPD Services", href: "/modules/opd-service/services" },
-    { icon: "schedule", label: "Schedule", href: "/modules/opd-service/schedule" },
+    {
+      icon: "medical_information",
+      label: "OPD Services",
+      href: "/modules/opd-service/services",
+    },
+    {
+      icon: "schedule",
+      label: "Schedule",
+      href: "/modules/opd-service/schedule",
+    },
     { icon: "receipt", label: "Billing", href: "/modules/opd-service/billing" },
-    { icon: "assessment", label: "Reports", href: "/modules/opd-service/reports" },
+    {
+      icon: "assessment",
+      label: "Reports",
+      href: "/modules/opd-service/reports",
+    },
   ],
   dialysis: [
     { icon: "dashboard", label: "Overview", href: "/modules/dialysis" },
-    { icon: "healing", label: "Active Sessions", href: "/modules/dialysis/sessions" },
+    {
+      icon: "healing",
+      label: "Active Sessions",
+      href: "/modules/dialysis/sessions",
+    },
     { icon: "schedule", label: "Schedule", href: "/modules/dialysis/schedule" },
     { icon: "history", label: "History", href: "/modules/dialysis/history" },
-    { icon: "equipment", label: "Equipment", href: "/modules/dialysis/equipment" },
+    {
+      icon: "equipment",
+      label: "Equipment",
+      href: "/modules/dialysis/equipment",
+    },
   ],
   "hr-management": [
     { icon: "dashboard", label: "Overview", href: "/modules/hr-management" },
-    { icon: "groups", label: "Employees", href: "/modules/hr-management/employees" },
-    { icon: "work", label: "Departments", href: "/modules/hr-management/departments" },
-    { icon: "schedule", label: "Attendance", href: "/modules/hr-management/attendance" },
-    { icon: "payments", label: "Payroll", href: "/modules/hr-management/payroll" },
+    {
+      icon: "groups",
+      label: "Employees",
+      href: "/modules/hr-management/employees",
+    },
+    {
+      icon: "work",
+      label: "Departments",
+      href: "/modules/hr-management/departments",
+    },
+    {
+      icon: "schedule",
+      label: "Attendance",
+      href: "/modules/hr-management/attendance",
+    },
+    {
+      icon: "payments",
+      label: "Payroll",
+      href: "/modules/hr-management/payroll",
+    },
   ],
   settings: [
     { icon: "dashboard", label: "Overview", href: "/modules/settings" },
     { icon: "settings", label: "General", href: "/modules/settings/general" },
     { icon: "security", label: "Security", href: "/modules/settings/security" },
-    { icon: "notifications", label: "Notifications", href: "/modules/settings/notifications" },
+    {
+      icon: "notifications",
+      label: "Notifications",
+      href: "/modules/settings/notifications",
+    },
     { icon: "backup", label: "Backup", href: "/modules/settings/backup" },
   ],
   "doctor-management": [
@@ -88,21 +259,53 @@ export const moduleMenus: Record<string, MenuItem[]> = {
     { icon: "person", label: "All Doctors", href: "/admin/doctors" },
     { icon: "person_add", label: "Add Doctor", href: "/admin/doctors/new" },
     { icon: "schedule", label: "Schedules", href: "/admin/doctors/schedules" },
-    { icon: "assessment", label: "Performance", href: "/admin/doctors/performance" },
+    {
+      icon: "assessment",
+      label: "Performance",
+      href: "/admin/doctors/performance",
+    },
   ],
   "asset-management": [
     { icon: "dashboard", label: "Overview", href: "/modules/asset-management" },
-    { icon: "inventory_2", label: "Assets", href: "/modules/asset-management/assets" },
-    { icon: "category", label: "Categories", href: "/modules/asset-management/categories" },
-    { icon: "history", label: "Maintenance", href: "/modules/asset-management/maintenance" },
-    { icon: "assessment", label: "Reports", href: "/modules/asset-management/reports" },
+    {
+      icon: "inventory_2",
+      label: "Assets",
+      href: "/modules/asset-management/assets",
+    },
+    {
+      icon: "category",
+      label: "Categories",
+      href: "/modules/asset-management/categories",
+    },
+    {
+      icon: "history",
+      label: "Maintenance",
+      href: "/modules/asset-management/maintenance",
+    },
+    {
+      icon: "assessment",
+      label: "Reports",
+      href: "/modules/asset-management/reports",
+    },
   ],
   "security-option": [
     { icon: "dashboard", label: "Overview", href: "/modules/security" },
-    { icon: "security", label: "Access Control", href: "/modules/security/access" },
-    { icon: "admin_panel_settings", label: "Roles", href: "/modules/security/roles" },
+    {
+      icon: "security",
+      label: "Access Control",
+      href: "/modules/security/access",
+    },
+    {
+      icon: "admin_panel_settings",
+      label: "Roles",
+      href: "/modules/security/roles",
+    },
     { icon: "history", label: "Audit Log", href: "/modules/security/audit" },
-    { icon: "vpn_key", label: "Permissions", href: "/modules/security/permissions" },
+    {
+      icon: "vpn_key",
+      label: "Permissions",
+      href: "/modules/security/permissions",
+    },
   ],
 };
 
@@ -117,8 +320,8 @@ export function getActiveModule(pathname: string): string | null {
   if (pathname.startsWith("/modules/hr-management")) return "hr-management";
   if (pathname.startsWith("/modules/settings")) return "settings";
   if (pathname.startsWith("/admin/doctors")) return "doctor-management";
-  if (pathname.startsWith("/modules/asset-management")) return "asset-management";
+  if (pathname.startsWith("/modules/asset-management"))
+    return "asset-management";
   if (pathname.startsWith("/modules/security")) return "security-option";
   return null;
 }
-
