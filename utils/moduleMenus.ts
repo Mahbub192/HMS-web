@@ -4,7 +4,12 @@ export interface MenuItem {
   icon: string;
   label: string;
   href: string;
-  subItems?: { icon: string; label: string; href: string }[];
+  subItems?: {
+    icon: string;
+    label: string;
+    href: string;
+    subItems?: { icon: string; label: string; href: string }[];
+  }[];
 }
 
 export const moduleMenus: Record<string, MenuItem[]> = {
@@ -132,24 +137,48 @@ export const moduleMenus: Record<string, MenuItem[]> = {
   diagnosis: [
     { icon: "dashboard", label: "Overview", href: "/modules/diagnosis" },
     {
-      icon: "medical_services",
-      label: "New Diagnosis",
-      href: "/modules/diagnosis/new",
+      icon: "receipt_long",
+      label: "Billing Information",
+      href: "/modules/diagnosis/billing",
+      subItems: [
+        {
+          icon: "receipt",
+          label: "Invoice",
+          href: "/modules/diagnosis/billing/invoice",
+        },
+        {
+          icon: "description",
+          label: "HC-Invoice",
+          href: "/modules/diagnosis/billing/hc-invoice",
+        },
+        {
+          icon: "money_off",
+          label: "Refund",
+          href: "/modules/diagnosis/billing/refund",
+        },
+        {
+          icon: "account_balance_wallet",
+          label: "Due Collection",
+          href: "/modules/diagnosis/billing/due-collection",
+        },
+      ],
     },
     {
-      icon: "history",
-      label: "Diagnosis History",
-      href: "/modules/diagnosis/history",
-    },
-    {
-      icon: "folder",
-      label: "Diagnosis Records",
-      href: "/modules/diagnosis/records",
-    },
-    {
-      icon: "assessment",
-      label: "Reports",
-      href: "/modules/diagnosis/reports",
+      icon: "print",
+      label: "Print Previous",
+      href: "/modules/diagnosis/print-previous",
+      subItems: [
+        {
+          icon: "receipt",
+          label: "Invoice details",
+          href: "/modules/diagnosis/print-previous/invoice-details",
+        },
+        {
+          icon: "assessment",
+          label: "Income Report",
+          href: "/modules/diagnosis/print-previous/income-report",
+        },
+      ],
     },
   ],
   emergency: [

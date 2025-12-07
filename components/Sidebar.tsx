@@ -16,7 +16,7 @@ interface MenuItem {
   icon: string;
   label: string;
   href: string;
-  subItems?: { icon: string; label: string; href: string }[];
+  subItems?: { icon: string; label: string; href: string; subItems?: { icon: string; label: string; href: string }[] }[];
 }
 
 export default function Sidebar({
@@ -117,7 +117,15 @@ export default function Sidebar({
     if (pathname.startsWith(item.href + "/")) return true;
     // Check if any sub-item is active
     if (item.subItems) {
-      return item.subItems.some((sub) => pathname === sub.href || pathname.startsWith(sub.href + "/"));
+      return item.subItems.some((sub) => {
+        const subActive = pathname === sub.href || pathname.startsWith(sub.href + "/");
+        // Check if any nested sub-item is active
+        if (sub.subItems) {
+          const nestedActive = sub.subItems.some((nested) => pathname === nested.href || pathname.startsWith(nested.href + "/"));
+          return subActive || nestedActive;
+        }
+        return subActive;
+      });
     }
     return false;
   };
@@ -233,22 +241,56 @@ export default function Sidebar({
                 </Link>
                 {hasSubItems && isItemActive && (
                   <div className="ml-4 mt-1 flex flex-col gap-1 border-l-2 border-primary/30 pl-3">
-                    {menuItem.subItems!.map((subItem) => (
-                      <Link
-                        key={subItem.href}
-                        href={subItem.href}
-                        className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-xs ${
-                          pathname === subItem.href
-                            ? "bg-primary/10 text-primary font-semibold"
-                            : "text-gray-600 dark:text-gray-400 hover:bg-primary/5"
-                        }`}
-                      >
-                        <span className="material-symbols-outlined text-sm">
-                          {subItem.icon}
-                        </span>
-                        <span>{subItem.label}</span>
-                      </Link>
-                    ))}
+                    {menuItem.subItems!.map((subItem) => {
+                      const hasNestedSubItems = subItem.subItems && subItem.subItems.length > 0;
+                      const isSubItemActive = pathname === subItem.href || pathname.startsWith(subItem.href + "/");
+                      const isSubItemParentActive = hasNestedSubItems && (isSubItemActive || subItem.subItems!.some((nested) => pathname === nested.href || pathname.startsWith(nested.href + "/")));
+
+                      return (
+                        <div key={subItem.href} className="flex flex-col">
+                          <Link
+                            href={subItem.href}
+                            className={`flex items-center gap-2 px-2 py-1.5 rounded-md text-xs ${
+                              pathname === subItem.href
+                                ? "bg-primary/10 text-primary font-semibold"
+                                : isSubItemParentActive
+                                ? "text-primary font-medium"
+                                : "text-gray-600 dark:text-gray-400 hover:bg-primary/5"
+                            }`}
+                          >
+                            <span className="material-symbols-outlined text-sm">
+                              {subItem.icon}
+                            </span>
+                            <span className="flex-1">{subItem.label}</span>
+                            {hasNestedSubItems && (
+                              <span className="material-symbols-outlined text-xs">
+                                {isSubItemParentActive ? "expand_more" : "chevron_right"}
+                              </span>
+                            )}
+                          </Link>
+                          {hasNestedSubItems && isSubItemParentActive && (
+                            <div className="ml-6 mt-1 flex flex-col gap-1 border-l-2 border-primary/20 pl-2">
+                              {subItem.subItems!.map((nestedItem) => (
+                                <Link
+                                  key={nestedItem.href}
+                                  href={nestedItem.href}
+                                  className={`flex items-center gap-2 px-2 py-1 rounded-md text-xs ${
+                                    pathname === nestedItem.href
+                                      ? "bg-primary/10 text-primary font-semibold"
+                                      : "text-gray-500 dark:text-gray-500 hover:bg-primary/5"
+                                  }`}
+                                >
+                                  <span className="material-symbols-outlined text-xs">
+                                    {nestedItem.icon}
+                                  </span>
+                                  <span>{nestedItem.label}</span>
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </div>
