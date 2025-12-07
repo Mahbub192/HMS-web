@@ -5,47 +5,125 @@ import Header from "@/components/Header";
 import Link from "next/link";
 import { useState } from "react";
 
-interface BillingItem {
-  description: string;
-  quantity: number;
-  unitPrice: number;
-  total: number;
+interface BillingRecord {
+  id: string;
+  billNo: string;
+  patientId: string;
+  patientName: string;
+  date: string;
+  amount: number;
+  status: "Paid" | "Pending" | "Partial" | "Overdue";
+  type: "IPD" | "OPD" | "Medicine" | "Investigation" | "Other";
 }
 
 export default function BillingInformationPage() {
-  const [patientSearch, setPatientSearch] = useState("");
-  const [selectedPatient, setSelectedPatient] = useState<{
-    id: string;
-    name: string;
-    bedNo?: string;
-    ward?: string;
-    department?: string;
-    admissionDate?: string;
-  } | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string>("All");
+  const [filterType, setFilterType] = useState<string>("All");
+  const [selectedRecord, setSelectedRecord] = useState<BillingRecord | null>(null);
 
-  const [billingItems] = useState<BillingItem[]>([
-    { description: "Bed Charges", quantity: 5, unitPrice: 2000, total: 10000 },
-    { description: "Consultation Fees", quantity: 1, unitPrice: 5000, total: 5000 },
-    { description: "Lab Tests", quantity: 1, unitPrice: 3500, total: 3500 },
-    { description: "Medications", quantity: 1, unitPrice: 4500, total: 4500 },
-    { description: "Procedure Charges", quantity: 1, unitPrice: 15000, total: 15000 },
-  ]);
-
-  const samplePatients = [
-    { id: "P-10254", name: "Liam Johnson", bedNo: "ICU-05", ward: "ICU", admissionDate: "2024-01-15" },
-    { id: "P-10260", name: "Robert Taylor", department: "Cardiology" },
+  const billingRecords: BillingRecord[] = [
+    {
+      id: "1",
+      billNo: "BIL-2024-001",
+      patientId: "P-10254",
+      patientName: "Liam Johnson",
+      date: "2024-01-20",
+      amount: 15000,
+      status: "Paid",
+      type: "IPD",
+    },
+    {
+      id: "2",
+      billNo: "BIL-2024-002",
+      patientId: "P-10255",
+      patientName: "Olivia Smith",
+      date: "2024-01-19",
+      amount: 8500,
+      status: "Pending",
+      type: "OPD",
+    },
+    {
+      id: "3",
+      billNo: "BIL-2024-003",
+      patientId: "P-10260",
+      patientName: "Robert Taylor",
+      date: "2024-01-18",
+      amount: 3200,
+      status: "Partial",
+      type: "Medicine",
+    },
+    {
+      id: "4",
+      billNo: "BIL-2024-004",
+      patientId: "P-10261",
+      patientName: "Emily Davis",
+      date: "2024-01-17",
+      amount: 5500,
+      status: "Paid",
+      type: "Investigation",
+    },
+    {
+      id: "5",
+      billNo: "BIL-2024-005",
+      patientId: "P-10270",
+      patientName: "Michael Brown",
+      date: "2024-01-16",
+      amount: 12000,
+      status: "Overdue",
+      type: "IPD",
+    },
   ];
 
-  const handlePatientSelect = (patient: typeof samplePatients[0]) => {
-    setSelectedPatient(patient);
-    setPatientSearch(patient.name);
+  const filteredRecords = billingRecords.filter((record) => {
+    const matchesSearch =
+      record.billNo.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      record.patientName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      record.patientId.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = filterStatus === "All" || record.status === filterStatus;
+    const matchesType = filterType === "All" || record.type === filterType;
+    return matchesSearch && matchesStatus && matchesType;
+  });
+
+  const stats = {
+    total: billingRecords.length,
+    paid: billingRecords.filter((r) => r.status === "Paid").length,
+    pending: billingRecords.filter((r) => r.status === "Pending").length,
+    totalAmount: billingRecords.reduce((sum, r) => sum + r.amount, 0),
+    paidAmount: billingRecords
+      .filter((r) => r.status === "Paid")
+      .reduce((sum, r) => sum + r.amount, 0),
   };
 
-  const subtotal = billingItems.reduce((sum, item) => sum + item.total, 0);
-  const tax = subtotal * 0.05; // 5% tax
-  const grandTotal = subtotal + tax;
-  const advancePaid = 20000;
-  const balance = grandTotal - advancePaid;
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Paid":
+        return "bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300";
+      case "Pending":
+        return "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300";
+      case "Partial":
+        return "bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300";
+      case "Overdue":
+        return "bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300";
+      default:
+        return "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300";
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case "IPD":
+        return "bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300";
+      case "OPD":
+        return "bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300";
+      case "Medicine":
+        return "bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300";
+      case "Investigation":
+        return "bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300";
+      default:
+        return "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300";
+    }
+  };
 
   return (
     <div className="relative flex min-h-screen w-full bg-background-light dark:bg-background-dark text-[#111816] dark:text-gray-200">
@@ -85,227 +163,156 @@ export default function BillingInformationPage() {
               </p>
             </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left Column - Patient Selection & Billing Details */}
-              <div className="lg:col-span-2 space-y-6">
-                {/* Patient Selection */}
-                <div className="bg-white dark:bg-[#182c25] rounded-xl border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-6">
-                  <h3 className="text-lg font-semibold text-[#111816] dark:text-white mb-4">
-                    Patient Information
-                  </h3>
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              <div className="bg-white dark:bg-[#182c25] rounded-xl border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-4">
+                <p className="text-sm text-[#61897c] dark:text-gray-400 mb-1">Total Bills</p>
+                <p className="text-2xl font-bold text-[#111816] dark:text-white">{stats.total}</p>
+              </div>
+              <div className="bg-white dark:bg-[#182c25] rounded-xl border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-4">
+                <p className="text-sm text-[#61897c] dark:text-gray-400 mb-1">Paid</p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.paid}</p>
+              </div>
+              <div className="bg-white dark:bg-[#182c25] rounded-xl border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-4">
+                <p className="text-sm text-[#61897c] dark:text-gray-400 mb-1">Pending</p>
+                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
+              </div>
+              <div className="bg-white dark:bg-[#182c25] rounded-xl border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-4">
+                <p className="text-sm text-[#61897c] dark:text-gray-400 mb-1">Total Amount</p>
+                <p className="text-2xl font-bold text-[#111816] dark:text-white">
+                  ৳{stats.totalAmount.toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            {/* Filters and Search */}
+            <div className="bg-white dark:bg-[#182c25] rounded-xl border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-6 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="relative">
-                    <div className="flex-1 relative">
                       <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
                         search
                       </span>
                       <input
                         type="text"
-                        value={patientSearch}
-                        onChange={(e) => setPatientSearch(e.target.value)}
-                        placeholder="Search by Patient Name or ID..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by Bill No, Patient Name or ID..."
                         className="w-full rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#182c25] px-3 py-2 pl-10 text-[#111816] dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
                       />
                     </div>
-                    {patientSearch && !selectedPatient && (
-                      <div className="mt-2 rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#182c25] max-h-48 overflow-y-auto">
-                        {samplePatients
-                          .filter(
-                            (p) =>
-                              p.name.toLowerCase().includes(patientSearch.toLowerCase()) ||
-                              p.id.toLowerCase().includes(patientSearch.toLowerCase())
-                          )
-                          .map((patient) => (
-                            <button
-                              key={patient.id}
-                              type="button"
-                              onClick={() => handlePatientSelect(patient)}
-                              className="w-full px-4 py-2 text-left hover:bg-[#f0f4f3] dark:hover:bg-[#2a3f38] transition-colors"
-                            >
-                              <div className="font-medium text-[#111816] dark:text-white">
-                                {patient.name}
-                              </div>
-                              <div className="text-sm text-[#61897c] dark:text-gray-400">
-                                {patient.id}
-                                {patient.bedNo && ` • Bed: ${patient.bedNo} • ${patient.ward}`}
-                                {patient.department && ` • ${patient.department}`}
-                              </div>
-                            </button>
-                          ))}
+                <div>
+                  <select
+                    value={filterStatus}
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    className="w-full rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#182c25] px-3 py-2 text-[#111816] dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                  >
+                    <option value="All">All Status</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Partial">Partial</option>
+                    <option value="Overdue">Overdue</option>
+                  </select>
                       </div>
-                    )}
-                    {selectedPatient && (
-                      <div className="mt-4 p-4 bg-[#f0f4f3] dark:bg-[#2a3f38] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38]">
-                        <div className="flex items-center justify-between">
                           <div>
-                            <p className="font-semibold text-[#111816] dark:text-white">
-                              {selectedPatient.name}
-                            </p>
-                            <p className="text-sm text-[#61897c] dark:text-gray-400">
-                              ID: {selectedPatient.id}
-                              {selectedPatient.bedNo && ` • Bed: ${selectedPatient.bedNo} • ${selectedPatient.ward}`}
-                              {selectedPatient.department && ` • ${selectedPatient.department}`}
-                              {selectedPatient.admissionDate && ` • Admission: ${new Date(selectedPatient.admissionDate).toLocaleDateString()}`}
-                            </p>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSelectedPatient(null);
-                              setPatientSearch("");
-                            }}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <span className="material-symbols-outlined">close</span>
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <select
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                    className="w-full rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#182c25] px-3 py-2 text-[#111816] dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
+                  >
+                    <option value="All">All Types</option>
+                    <option value="IPD">IPD</option>
+                    <option value="OPD">OPD</option>
+                    <option value="Medicine">Medicine</option>
+                    <option value="Investigation">Investigation</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
                 </div>
 
-                {/* Billing Details */}
-                {selectedPatient && (
-                  <div className="bg-white dark:bg-[#182c25] rounded-xl border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-6">
-                    <h3 className="text-lg font-semibold text-[#111816] dark:text-white mb-4">
-                      Billing Details
-                    </h3>
+            {/* Billing Records Table */}
+            <div className="bg-white dark:bg-[#182c25] rounded-xl border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                       <table className="w-full">
-                        <thead>
-                          <tr className="border-b border-[#dbe6e2] dark:border-[#2a3f38]">
-                            <th className="text-left py-3 px-4 text-sm font-semibold text-[#111816] dark:text-white">
-                              Description
+                  <thead className="bg-[#f0f4f3] dark:bg-[#2a3f38]">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#111816] dark:text-white uppercase tracking-wider">
+                        Bill No
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#111816] dark:text-white uppercase tracking-wider">
+                        Patient
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#111816] dark:text-white uppercase tracking-wider">
+                        Date
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#111816] dark:text-white uppercase tracking-wider">
+                        Type
                             </th>
-                            <th className="text-center py-3 px-4 text-sm font-semibold text-[#111816] dark:text-white">
-                              Quantity
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#111816] dark:text-white uppercase tracking-wider">
+                        Amount
                             </th>
-                            <th className="text-right py-3 px-4 text-sm font-semibold text-[#111816] dark:text-white">
-                              Unit Price
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#111816] dark:text-white uppercase tracking-wider">
+                        Status
                             </th>
-                            <th className="text-right py-3 px-4 text-sm font-semibold text-[#111816] dark:text-white">
-                              Total
+                      <th className="px-6 py-3 text-left text-xs font-medium text-[#111816] dark:text-white uppercase tracking-wider">
+                        Actions
                             </th>
                           </tr>
                         </thead>
-                        <tbody>
-                          {billingItems.map((item, index) => (
-                            <tr
-                              key={index}
-                              className="border-b border-[#dbe6e2] dark:border-[#2a3f38]"
+                  <tbody className="divide-y divide-[#dbe6e2] dark:divide-[#2a3f38]">
+                    {filteredRecords.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="px-6 py-8 text-center text-[#61897c] dark:text-gray-400">
+                          No billing records found
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredRecords.map((record) => (
+                        <tr
+                          key={record.id}
+                          className="hover:bg-[#f0f4f3] dark:hover:bg-[#2a3f38] transition-colors cursor-pointer"
+                          onClick={() => setSelectedRecord(record)}
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[#111816] dark:text-white">
+                            {record.billNo}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-[#111816] dark:text-white">
+                              {record.patientName}
+                            </div>
+                            <div className="text-sm text-[#61897c] dark:text-gray-400">
+                              {record.patientId}
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#111816] dark:text-white">
+                            {new Date(record.date).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 text-xs rounded-full font-medium ${getTypeColor(record.type)}`}>
+                              {record.type}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-[#111816] dark:text-white">
+                            ৳{record.amount.toLocaleString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 py-1 text-xs rounded-full font-medium ${getStatusColor(record.status)}`}>
+                              {record.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <Link
+                              href={`/admin/billing/${record.id}`}
+                              className="text-primary hover:text-primary/80 font-medium"
                             >
-                              <td className="py-3 px-4 text-sm text-[#111816] dark:text-white">
-                                {item.description}
-                              </td>
-                              <td className="py-3 px-4 text-sm text-center text-[#61897c] dark:text-gray-400">
-                                {item.quantity}
-                              </td>
-                              <td className="py-3 px-4 text-sm text-right text-[#61897c] dark:text-gray-400">
-                                ${item.unitPrice.toLocaleString()}
-                              </td>
-                              <td className="py-3 px-4 text-sm text-right font-medium text-[#111816] dark:text-white">
-                                ${item.total.toLocaleString()}
+                              View
+                            </Link>
                               </td>
                             </tr>
-                          ))}
+                      ))
+                    )}
                         </tbody>
                       </table>
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-[#dbe6e2] dark:border-[#2a3f38] space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-[#61897c] dark:text-gray-400">Subtotal</span>
-                        <span className="text-[#111816] dark:text-white font-medium">
-                          ${subtotal.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-[#61897c] dark:text-gray-400">Tax (5%)</span>
-                        <span className="text-[#111816] dark:text-white font-medium">
-                          ${tax.toLocaleString()}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-lg font-bold pt-2 border-t border-[#dbe6e2] dark:border-[#2a3f38]">
-                        <span className="text-[#111816] dark:text-white">Grand Total</span>
-                        <span className="text-primary">${grandTotal.toLocaleString()}</span>
-                      </div>
-                      <div className="pt-3 space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-[#61897c] dark:text-gray-400">Advance Paid</span>
-                          <span className="text-green-600 dark:text-green-400">
-                            ${advancePaid.toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="flex justify-between text-lg font-bold pt-2 border-t border-[#dbe6e2] dark:border-[#2a3f38]">
-                          <span className="text-[#111816] dark:text-white">Balance</span>
-                          <span
-                            className={
-                              balance > 0
-                                ? "text-red-600 dark:text-red-400"
-                                : "text-green-600 dark:text-green-400"
-                            }
-                          >
-                            ${Math.abs(balance).toLocaleString()}
-                            {balance > 0 ? " (Due)" : " (Refund)"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-6 flex gap-3">
-                      <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-primary text-background-dark text-sm font-medium rounded-lg hover:opacity-90 transition-opacity">
-                        <span className="material-symbols-outlined">print</span>
-                        <span>Print Bill</span>
-                      </button>
-                      <button className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-[#111816] dark:text-white text-sm font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                        <span className="material-symbols-outlined">download</span>
-                        <span>Download PDF</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Right Column - Payment History */}
-              <div className="lg:col-span-1">
-                {selectedPatient && (
-                  <div className="bg-white dark:bg-[#182c25] rounded-xl border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-6 sticky top-6">
-                    <h3 className="text-lg font-semibold text-[#111816] dark:text-white mb-4">
-                      Payment History
-                    </h3>
-                    <div className="space-y-3">
-                      <div className="p-3 bg-[#f0f4f3] dark:bg-[#2a3f38] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38]">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-mono text-[#61897c] dark:text-gray-400">
-                            PAY-001
-                          </span>
-                          <span className="text-xs text-[#61897c] dark:text-gray-400">
-                            {new Date().toLocaleDateString()}
-                          </span>
-                        </div>
-                        <p className="text-sm font-semibold text-green-600 dark:text-green-400">
-                          $10,000
-                        </p>
-                        <p className="text-xs text-[#61897c] dark:text-gray-400">
-                          Cash • Advance Payment
-                        </p>
-                      </div>
-                      <div className="p-3 bg-[#f0f4f3] dark:bg-[#2a3f38] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38]">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-xs font-mono text-[#61897c] dark:text-gray-400">
-                            PAY-002
-                          </span>
-                          <span className="text-xs text-[#61897c] dark:text-gray-400">
-                            {new Date().toLocaleDateString()}
-                          </span>
-                        </div>
-                        <p className="text-sm font-semibold text-green-600 dark:text-green-400">
-                          $10,000
-                        </p>
-                        <p className="text-xs text-[#61897c] dark:text-gray-400">
-                          Card • Advance Payment
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>
@@ -314,4 +321,3 @@ export default function BillingInformationPage() {
     </div>
   );
 }
-

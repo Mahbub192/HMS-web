@@ -11,7 +11,9 @@ interface InvestigationItem {
   category: string;
   requestedBy: string;
   requestDate: string;
-  status: "Pending" | "Approved" | "Completed" | "Rejected";
+  status: "Pending" | "Approved" | "In Progress" | "Completed" | "Cancelled";
+  patientId: string;
+  patientName: string;
 }
 
 export default function InvestigationPage() {
@@ -19,15 +21,15 @@ export default function InvestigationPage() {
   const [selectedPatient, setSelectedPatient] = useState<{
     id: string;
     name: string;
+    department?: string;
     bedNo?: string;
     ward?: string;
-    department?: string;
   } | null>(null);
 
   const [formData, setFormData] = useState({
     requestDate: new Date().toISOString().split("T")[0],
     investigationName: "",
-    category: "Lab Test",
+    category: "Laboratory",
     priority: "Normal",
     remarks: "",
     requestedBy: "",
@@ -36,20 +38,17 @@ export default function InvestigationPage() {
   const [investigations, setInvestigations] = useState<InvestigationItem[]>([]);
 
   const samplePatients = [
-    { id: "P-10254", name: "Liam Johnson", bedNo: "ICU-05", ward: "ICU" },
-    { id: "P-10260", name: "Robert Taylor", department: "Cardiology" },
+    { id: "P-10270", name: "Michael Brown", department: "Cardiology", bedNo: "ICU-05", ward: "ICU" },
+    { id: "P-10271", name: "Sarah Wilson", department: "Orthopedics" },
+    { id: "P-10272", name: "David Lee", department: "Neurology", bedNo: "GEN-102", ward: "General Ward" },
   ];
 
   const investigationCategories = [
-    "Lab Test",
+    "Laboratory",
     "Radiology",
-    "Ultrasound",
-    "CT Scan",
-    "MRI",
-    "ECG",
-    "Echocardiography",
-    "Endoscopy",
-    "Biopsy",
+    "Pathology",
+    "Cardiology",
+    "Neurology",
     "Other",
   ];
 
@@ -66,8 +65,8 @@ export default function InvestigationPage() {
   };
 
   const handleAddInvestigation = () => {
-    if (!formData.investigationName) {
-      alert("Please enter investigation name");
+    if (!formData.investigationName || !selectedPatient) {
+      alert("Please fill in investigation name and select a patient");
       return;
     }
 
@@ -78,6 +77,8 @@ export default function InvestigationPage() {
       requestedBy: formData.requestedBy || "Current User",
       requestDate: formData.requestDate,
       status: "Pending",
+      patientId: selectedPatient.id,
+      patientName: selectedPatient.name,
     };
 
     setInvestigations([...investigations, newItem]);
@@ -106,6 +107,23 @@ export default function InvestigationPage() {
     });
 
     alert(`Investigation request submitted successfully!\nPatient: ${selectedPatient.name}\nItems: ${investigations.length}`);
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Pending":
+        return "bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300";
+      case "Approved":
+        return "bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300";
+      case "In Progress":
+        return "bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300";
+      case "Completed":
+        return "bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300";
+      case "Cancelled":
+        return "bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300";
+      default:
+        return "bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300";
+    }
   };
 
   return (
@@ -186,9 +204,9 @@ export default function InvestigationPage() {
                                 {patient.name}
                               </div>
                               <div className="text-sm text-[#61897c] dark:text-gray-400">
-                                {patient.id}
-                                {patient.bedNo && ` • Bed: ${patient.bedNo} • ${patient.ward}`}
-                                {patient.department && ` • ${patient.department}`}
+                                {patient.id} • {patient.department}
+                                {patient.bedNo && ` • Bed: ${patient.bedNo}`}
+                                {patient.ward && ` • ${patient.ward}`}
                               </div>
                             </button>
                           ))}
@@ -202,9 +220,9 @@ export default function InvestigationPage() {
                               {selectedPatient.name}
                             </p>
                             <p className="text-sm text-[#61897c] dark:text-gray-400">
-                              ID: {selectedPatient.id}
-                              {selectedPatient.bedNo && ` • Bed: ${selectedPatient.bedNo} • ${selectedPatient.ward}`}
-                              {selectedPatient.department && ` • ${selectedPatient.department}`}
+                              ID: {selectedPatient.id} • {selectedPatient.department}
+                              {selectedPatient.bedNo && ` • Bed: ${selectedPatient.bedNo}`}
+                              {selectedPatient.ward && ` • ${selectedPatient.ward}`}
                             </p>
                           </div>
                           <button
@@ -273,19 +291,18 @@ export default function InvestigationPage() {
                           value={formData.investigationName}
                           onChange={handleInputChange}
                           required
-                          placeholder="Enter investigation name"
+                          placeholder="e.g., Complete Blood Count, X-Ray Chest, ECG"
                           className="w-full rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-3 py-2 text-[#111816] dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-[#111816] dark:text-white mb-1">
-                          Priority: <span className="text-red-500">*</span>
+                          Priority:
                         </label>
                         <select
                           name="priority"
                           value={formData.priority}
                           onChange={handleInputChange}
-                          required
                           className="w-full rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-3 py-2 text-[#111816] dark:text-white focus:ring-2 focus:ring-primary focus:border-primary"
                         >
                           <option value="Normal">Normal</option>
@@ -344,18 +361,18 @@ export default function InvestigationPage() {
                           className="p-4 bg-[#f0f4f3] dark:bg-[#2a3f38] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38]"
                         >
                           <div className="flex items-center justify-between">
-                            <div>
+                            <div className="flex-1">
                               <p className="font-semibold text-[#111816] dark:text-white">
                                 {item.name}
                               </p>
                               <p className="text-sm text-[#61897c] dark:text-gray-400">
-                                Category: {item.category}
+                                Category: {item.category} • Priority: {formData.priority}
                               </p>
                               <p className="text-xs text-[#61897c] dark:text-gray-400">
                                 Requested by: {item.requestedBy} • {new Date(item.requestDate).toLocaleDateString()}
                               </p>
                             </div>
-                            <span className="px-2 py-1 text-xs rounded-full bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300">
+                            <span className={`px-3 py-1 text-xs rounded-full font-medium ${getStatusColor(item.status)}`}>
                               {item.status}
                             </span>
                           </div>
@@ -384,18 +401,26 @@ export default function InvestigationPage() {
                   <div className="space-y-3">
                     <div className="p-3 bg-[#f0f4f3] dark:bg-[#2a3f38] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38]">
                       <p className="text-sm font-medium text-[#111816] dark:text-white mb-1">
-                        Complete Blood Count (CBC)
+                        Complete Blood Count
                       </p>
                       <p className="text-xs text-[#61897c] dark:text-gray-400">
-                        P-10254 • Lab Test • Completed
+                        P-10270 • Laboratory • Completed
                       </p>
                     </div>
                     <div className="p-3 bg-[#f0f4f3] dark:bg-[#2a3f38] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38]">
                       <p className="text-sm font-medium text-[#111816] dark:text-white mb-1">
-                        Chest X-Ray
+                        X-Ray Chest
                       </p>
                       <p className="text-xs text-[#61897c] dark:text-gray-400">
-                        P-10260 • Radiology • Approved
+                        P-10271 • Radiology • In Progress
+                      </p>
+                    </div>
+                    <div className="p-3 bg-[#f0f4f3] dark:bg-[#2a3f38] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38]">
+                      <p className="text-sm font-medium text-[#111816] dark:text-white mb-1">
+                        ECG
+                      </p>
+                      <p className="text-xs text-[#61897c] dark:text-gray-400">
+                        P-10272 • Cardiology • Approved
                       </p>
                     </div>
                   </div>
@@ -408,4 +433,3 @@ export default function InvestigationPage() {
     </div>
   );
 }
-
