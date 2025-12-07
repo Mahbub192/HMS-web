@@ -33,11 +33,6 @@ export const moduleMenus: Record<string, MenuItem[]> = {
   ],
   hospital: [
     { icon: "dashboard", label: "Overview", href: "/modules/hospital" },
-    {
-      icon: "local_hospital",
-      label: "Departments",
-      href: "/modules/hospital/departments",
-    },
     { icon: "bed", label: "Wards", href: "/modules/hospital/wards" },
     {
       icon: "science",
@@ -133,12 +128,6 @@ export const moduleMenus: Record<string, MenuItem[]> = {
         },
       ],
     },
-    {
-      icon: "settings",
-      label: "Hospital Settings",
-      href: "/modules/hospital/settings",
-    },
-    { icon: "info", label: "Hospital Info", href: "/modules/hospital/info" },
   ],
   diagnosis: [
     { icon: "dashboard", label: "Overview", href: "/modules/diagnosis" },
