@@ -226,8 +226,8 @@ export default function BillingInformationPage() {
                     <option value="Investigation">Investigation</option>
                     <option value="Other">Other</option>
                   </select>
-                </div>
-              </div>
+                        </div>
+                  </div>
                 </div>
 
             {/* Billing Records Table */}

@@ -210,7 +210,7 @@ export default function RefundAmountPage() {
   };
 
   const availableRefund = getAvailableRefundAmount();
-
+  
   return (
     <div className="relative flex min-h-screen w-full bg-background-light dark:bg-background-dark text-[#111816] dark:text-gray-200">
       <Sidebar userType="admin" />

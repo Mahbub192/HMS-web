@@ -1,8 +1,7 @@
 "use client";
 
-import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
-import Link from "next/link";
+import Sidebar from "@/components/Sidebar";
 import { useState } from "react";
 
 interface HealthCheckupItem {
@@ -14,7 +13,9 @@ interface HealthCheckupItem {
 }
 
 export default function HCInvoicePage() {
-  const [patientType, setPatientType] = useState<"Indoor" | "Outdoor">("Indoor");
+  const [patientType, setPatientType] = useState<"Indoor" | "Outdoor">(
+    "Indoor"
+  );
   const [formData, setFormData] = useState({
     name: "",
     age: "",
@@ -54,7 +55,9 @@ export default function HCInvoicePage() {
     urgent: false,
   });
 
-  const [healthCheckupList, setHealthCheckupList] = useState<HealthCheckupItem[]>([]);
+  const [healthCheckupList, setHealthCheckupList] = useState<
+    HealthCheckupItem[]
+  >([]);
   const [showLessAmount, setShowLessAmount] = useState(false);
 
   const sampleHealthCheckups = [
@@ -66,7 +69,9 @@ export default function HCInvoicePage() {
   ];
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value, type } = e.target;
     if (type === "checkbox") {
@@ -93,7 +98,8 @@ export default function HCInvoicePage() {
       id: Date.now().toString(),
       slNo: healthCheckupList.length + 1,
       testCode: checkup?.code || formData.healthCheckup,
-      testInformation: checkup?.name || formData.diagnosisTestInfo || formData.healthCheckup,
+      testInformation:
+        checkup?.name || formData.diagnosisTestInfo || formData.healthCheckup,
       charge: parseFloat(formData.charge) || 0,
     };
 
@@ -106,20 +112,28 @@ export default function HCInvoicePage() {
     }));
 
     // Calculate total
-    const newTotal = [...healthCheckupList, newItem].reduce((sum, item) => sum + item.charge, 0);
+    const newTotal = [...healthCheckupList, newItem].reduce(
+      (sum, item) => sum + item.charge,
+      0
+    );
     const lessAmount = parseFloat(formData.lessAmount) || 0;
     const netPayable = newTotal - lessAmount;
     setFormData((prev) => ({
       ...prev,
       totalTaka: newTotal.toString(),
       netPayable: netPayable.toString(),
-      dueAmount: (netPayable - (parseFloat(prev.amountReceived) || 0)).toString(),
+      dueAmount: (
+        netPayable - (parseFloat(prev.amountReceived) || 0)
+      ).toString(),
     }));
   };
 
   const handleRemoveHealthCheckup = (id: string) => {
     const updatedList = healthCheckupList.filter((item) => item.id !== id);
-    const renumberedList = updatedList.map((item, index) => ({ ...item, slNo: index + 1 }));
+    const renumberedList = updatedList.map((item, index) => ({
+      ...item,
+      slNo: index + 1,
+    }));
     setHealthCheckupList(renumberedList);
 
     // Recalculate total
@@ -130,7 +144,9 @@ export default function HCInvoicePage() {
       ...prev,
       totalTaka: newTotal.toString(),
       netPayable: netPayable.toString(),
-      dueAmount: (netPayable - (parseFloat(prev.amountReceived) || 0)).toString(),
+      dueAmount: (
+        netPayable - (parseFloat(prev.amountReceived) || 0)
+      ).toString(),
     }));
   };
 
@@ -163,7 +179,11 @@ export default function HCInvoicePage() {
   };
 
   const handleSaveAndPrint = () => {
-    console.log("HC Invoice Data:", { formData, healthCheckupList, patientType });
+    console.log("HC Invoice Data:", {
+      formData,
+      healthCheckupList,
+      patientType,
+    });
     alert("Health Checkup Invoice saved and printed successfully!");
   };
 
@@ -176,74 +196,67 @@ export default function HCInvoicePage() {
       <Sidebar userType="admin" />
       <main className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        <div className="flex-1 p-3 overflow-y-auto">
-          <div className="w-full max-w-[1920px] mx-auto">
-            {/* Breadcrumbs and Heading - Compact */}
-            <div className="flex flex-wrap justify-between items-center mb-2">
-              <div className="flex items-center gap-3">
-                <div className="flex flex-wrap gap-2 text-xs">
-                  <Link
-                    href="/modules/diagnosis"
-                    className="font-medium text-gray-500 hover:text-primary dark:text-gray-400"
-                  >
-                    Diagnosis
-                  </Link>
-                  <span className="font-medium text-gray-500 dark:text-gray-400">/</span>
-                  <Link
-                    href="/modules/diagnosis/billing"
-                    className="font-medium text-gray-500 hover:text-primary dark:text-gray-400"
-                  >
-                    Billing Information
-                  </Link>
-                  <span className="font-medium text-gray-500 dark:text-gray-400">/</span>
-                  <span className="font-medium text-[#111816] dark:text-white">
-                    Diagnosis Invoice
-                  </span>
+        <div className="flex-1 p-6 overflow-y-auto">
+          <div className="max-w-[1600px] mx-auto grid grid-cols-12 gap-6">
+            {/* Left Column - 8 columns */}
+            <div className="col-span-12 lg:col-span-8 flex flex-col gap-6">
+              {/* Information Section */}
+              <section className="bg-white dark:bg-[#182c25] rounded-xl shadow-sm border border-[#dbe6e2] dark:border-[#2a3f38] p-6">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-lg font-semibold text-[#111816] dark:text-white border-l-4 border-primary pl-3">
+                    Information
+                  </h2>
+                  <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg p-1 border border-[#dbe6e2] dark:border-[#2a3f38]">
+                    <label className="cursor-pointer">
+                      <input
+                        type="radio"
+                        name="patient_type"
+                        checked={patientType === "Indoor"}
+                        onChange={() => setPatientType("Indoor")}
+                        className="peer sr-only"
+                      />
+                      <span
+                        className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all shadow-sm ${
+                          patientType === "Indoor"
+                            ? "bg-primary text-white"
+                            : "text-gray-500 dark:text-gray-400"
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-base">
+                          apartment
+                        </span>
+                        Indoor
+                      </span>
+                    </label>
+                    <label className="cursor-pointer">
+                      <input
+                        type="radio"
+                        name="patient_type"
+                        checked={patientType === "Outdoor"}
+                        onChange={() => setPatientType("Outdoor")}
+                        className="peer sr-only"
+                      />
+                      <span
+                        className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-medium transition-all shadow-sm ${
+                          patientType === "Outdoor"
+                            ? "bg-primary text-white"
+                            : "text-gray-500 dark:text-gray-400"
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-base">
+                          deck
+                        </span>
+                        Outdoor
+                      </span>
+                    </label>
+                  </div>
                 </div>
-                <h1 className="text-xl font-bold text-[#111816] dark:text-white">
-                  HEALTH CHECKUP INVOICE
-                </h1>
-              </div>
-            </div>
-
-            <form className="space-y-2">
-              {/* Patient Type Toggle */}
-              <div className="flex gap-2 mb-2">
-                <button
-                  type="button"
-                  onClick={() => setPatientType("Indoor")}
-                  className={`px-4 py-1 text-sm rounded-lg font-medium transition-colors ${
-                    patientType === "Indoor"
-                      ? "bg-primary text-background-dark"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                  }`}
-                >
-                  Indoor
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPatientType("Outdoor")}
-                  className={`px-4 py-1 text-sm rounded-lg font-medium transition-colors ${
-                    patientType === "Outdoor"
-                      ? "bg-primary text-background-dark"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                  }`}
-                >
-                  Outdoor
-                </button>
-              </div>
-
-              {/* Patient Information Section */}
-              <div className="bg-white dark:bg-[#182c25] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-3">
-                <h3 className="text-sm font-semibold text-[#111816] dark:text-white mb-2">
-                  Information
-                </h3>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                <form className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                   {/* Left Column */}
-                  <div className="space-y-2">
-                    <div>
-                      <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                        Name <span className="text-red-500">*</span>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                        Name
                       </label>
                       <input
                         type="text"
@@ -252,11 +265,11 @@ export default function HCInvoicePage() {
                         onChange={handleInputChange}
                         placeholder="Enter Patient Name"
                         required
-                        className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                        className="col-span-2 w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white transition-shadow"
                       />
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                         Age
                       </label>
                       <input
@@ -265,11 +278,11 @@ export default function HCInvoicePage() {
                         value={formData.age}
                         onChange={handleInputChange}
                         placeholder="Age"
-                        className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                        className="col-span-2 w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
                       />
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                         Address
                       </label>
                       <input
@@ -278,106 +291,94 @@ export default function HCInvoicePage() {
                         value={formData.address}
                         onChange={handleInputChange}
                         placeholder="Address"
-                        className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                        className="col-span-2 w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                          Corporate Client
-                        </label>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                        Corp. Client
+                      </label>
+                      <div className="col-span-2 flex gap-2">
                         <select
                           name="corporateClient"
                           value={formData.corporateClient}
                           onChange={handleInputChange}
-                          className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                          className="w-1/3 rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
                         >
                           <option value="No">No</option>
                           <option value="Yes">Yes</option>
                         </select>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                          &nbsp;
-                        </label>
                         <input
                           type="text"
                           name="corporateClientSearch"
                           value={formData.corporateClientSearch}
                           onChange={handleInputChange}
-                          placeholder="Search By ID or Company N"
-                          className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                          placeholder="Search By ID or Company Name"
+                          className="w-2/3 rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
                         />
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      <div className="flex-1">
-                        <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                          Referenced
-                        </label>
-                        <div className="flex gap-1">
-                          <input
-                            type="text"
-                            name="referenced"
-                            value={formData.referenced}
-                            onChange={handleInputChange}
-                            className="flex-1 rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                          />
-                          <button
-                            type="button"
-                            className="px-2 py-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                          >
-                            <span className="material-symbols-outlined text-sm">expand_more</span>
-                          </button>
-                          <button
-                            type="button"
-                            className="px-2 py-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                          >
-                            <span className="material-symbols-outlined text-sm">description</span>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                        Consultant
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                        Referenced
                       </label>
-                      <div className="flex gap-1">
-                        <input
-                          type="text"
-                          name="consultant"
-                          value={formData.consultant}
+                      <div className="col-span-2 flex gap-2">
+                        <select
+                          name="referenced"
+                          value={formData.referenced}
                           onChange={handleInputChange}
-                          className="flex-1 rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                        />
+                          className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
+                        >
+                          <option value="">Select Referrer</option>
+                        </select>
                         <button
                           type="button"
-                          className="px-2 py-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                          className="p-2 text-primary hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-md transition-colors"
                         >
-                          <span className="material-symbols-outlined text-sm">expand_more</span>
+                          <span className="material-symbols-outlined text-lg">
+                            edit_note
+                          </span>
                         </button>
                       </div>
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                        Consultant
+                      </label>
+                      <select
+                        name="consultant"
+                        value={formData.consultant}
+                        onChange={handleInputChange}
+                        className="col-span-2 w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
+                      >
+                        <option value="">Select Consultant</option>
+                      </select>
                     </div>
                   </div>
 
                   {/* Right Column */}
-                  <div className="space-y-2">
-                    <div>
-                      <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                         Patient Id
                       </label>
-                      <select
-                        name="patientId"
-                        value={formData.patientId}
-                        onChange={handleInputChange}
-                        className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                      >
-                        <option value="">Search By Patient Id</option>
-                      </select>
+                      <div className="col-span-2 relative">
+                        <input
+                          type="text"
+                          name="patientId"
+                          value={formData.patientId}
+                          onChange={handleInputChange}
+                          placeholder="Search By Patient Id"
+                          className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white pr-8"
+                        />
+                        <span className="material-symbols-outlined absolute right-2 top-2 text-gray-400 text-sm">
+                          search
+                        </span>
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                        Phone Number
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                        Phone
                       </label>
                       <input
                         type="text"
@@ -385,18 +386,18 @@ export default function HCInvoicePage() {
                         value={formData.phoneNumber}
                         onChange={handleInputChange}
                         placeholder="Phone Number"
-                        className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                        className="col-span-2 w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
                       />
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                         Gender
                       </label>
                       <select
                         name="gender"
                         value={formData.gender}
                         onChange={handleInputChange}
-                        className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                        className="col-span-2 w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
                       >
                         <option value="">Select Gender</option>
                         <option value="Male">Male</option>
@@ -405,8 +406,8 @@ export default function HCInvoicePage() {
                       </select>
                     </div>
                     {patientType === "Indoor" && (
-                      <div>
-                        <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
                           Admission Date
                         </label>
                         <input
@@ -414,14 +415,14 @@ export default function HCInvoicePage() {
                           name="admissionDate"
                           value={formData.admissionDate}
                           onChange={handleInputChange}
-                          className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                          className="col-span-2 w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
                         />
                       </div>
                     )}
                     {formData.corporateClient === "Yes" && (
-                      <div>
-                        <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                          Company Name
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                          Company
                         </label>
                         <input
                           type="text"
@@ -429,445 +430,466 @@ export default function HCInvoicePage() {
                           value={formData.companyName}
                           onChange={handleInputChange}
                           placeholder="Corporate Client Name"
-                          className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                          disabled
+                          className="col-span-2 w-full rounded-md border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-sm text-gray-500 cursor-not-allowed"
                         />
                       </div>
                     )}
-                    <div>
-                      <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                        Referenced Name
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <div className="col-span-3">
+                        <input
+                          type="text"
+                          name="referencedName"
+                          value={formData.referencedName}
+                          onChange={handleInputChange}
+                          placeholder="Referenced Name"
+                          disabled
+                          className="w-full rounded-md border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-sm text-gray-500 cursor-not-allowed"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <div className="col-span-3">
+                        <input
+                          type="text"
+                          name="consultantDoctorName"
+                          value={formData.consultantDoctorName}
+                          onChange={handleInputChange}
+                          placeholder="Consultant Doctor Name"
+                          disabled
+                          className="w-full rounded-md border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-sm text-gray-500 cursor-not-allowed"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </section>
+
+              {/* Add Health Checkup Information Section */}
+              <section className="bg-white dark:bg-[#182c25] rounded-xl shadow-sm border border-[#dbe6e2] dark:border-[#2a3f38] flex-grow flex flex-col overflow-hidden">
+                <div className="p-6 border-b border-[#dbe6e2] dark:border-[#2a3f38] bg-gray-50/50 dark:bg-gray-800/50">
+                  <h2 className="text-lg font-semibold text-[#111816] dark:text-white mb-4">
+                    Add Health Checkup Information
+                  </h2>
+                  <div className="grid grid-cols-12 gap-3 items-end">
+                    <div className="col-span-12 md:col-span-3">
+                      <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">
+                        Test
+                      </label>
+                      <select
+                        name="healthCheckup"
+                        value={formData.healthCheckup}
+                        onChange={handleInputChange}
+                        className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
+                      >
+                        <option value="">Test code or name</option>
+                        {sampleHealthCheckups.map((hc) => (
+                          <option key={hc.code} value={hc.code}>
+                            {hc.code} - {hc.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="col-span-12 md:col-span-5">
+                      <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">
+                        Info
                       </label>
                       <input
                         type="text"
-                        name="referencedName"
-                        value={formData.referencedName}
+                        name="diagnosisTestInfo"
+                        value={formData.diagnosisTestInfo}
                         onChange={handleInputChange}
-                        placeholder="Referenced Name"
-                        className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                        placeholder="Diagnosis Test Information"
+                        className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
                       />
                     </div>
-                    <div>
-                      <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                        Consultant Doctor Name
+                    <div className="col-span-12 md:col-span-2">
+                      <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">
+                        Charge
                       </label>
                       <input
-                        type="text"
-                        name="consultantDoctorName"
-                        value={formData.consultantDoctorName}
+                        type="number"
+                        name="charge"
+                        value={formData.charge}
                         onChange={handleInputChange}
-                        placeholder="Consultant Doctor Name"
-                        className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                        placeholder="0.00"
+                        className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white text-right"
                       />
+                    </div>
+                    <div className="col-span-12 md:col-span-2">
+                      <button
+                        type="button"
+                        onClick={handleAddHealthCheckup}
+                        className="w-full bg-primary hover:bg-primary-dark text-white font-medium py-2 px-4 rounded-md transition-colors flex items-center justify-center gap-2 shadow-md shadow-blue-500/20"
+                      >
+                        <span className="material-symbols-outlined text-sm">
+                          add
+                        </span>
+                        Add
+                      </button>
                     </div>
                   </div>
                 </div>
-              </div>
+                <div className="p-0 flex-grow flex flex-col">
+                  <div className="px-6 py-3 border-b border-[#dbe6e2] dark:border-[#2a3f38]">
+                    <h3 className="font-medium text-gray-700 dark:text-gray-200">
+                      Investigation Information
+                    </h3>
+                  </div>
+                  <div className="overflow-x-auto min-h-[200px]">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-[#dbe6e2] dark:border-[#2a3f38] text-xs uppercase text-gray-500 dark:text-gray-400">
+                          <th className="px-6 py-3 font-semibold">SL No.</th>
+                          <th className="px-6 py-3 font-semibold">Test Code</th>
+                          <th className="px-6 py-3 font-semibold w-1/2">
+                            Test Information
+                          </th>
+                          <th className="px-6 py-3 font-semibold text-right">
+                            Charge
+                          </th>
+                          <th className="px-6 py-3 font-semibold text-center">
+                            Action
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#dbe6e2] dark:divide-[#2a3f38] text-sm">
+                        {healthCheckupList.length === 0 ? (
+                          <tr>
+                            <td
+                              className="py-12 text-center text-gray-400 dark:text-gray-600"
+                              colSpan={5}
+                            >
+                              <div className="flex flex-col items-center justify-center">
+                                <span className="material-symbols-outlined text-4xl mb-2 opacity-30">
+                                  science
+                                </span>
+                                <p>No investigations added yet.</p>
+                              </div>
+                            </td>
+                          </tr>
+                        ) : (
+                          healthCheckupList.map((item) => (
+                            <tr
+                              key={item.id}
+                              className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                            >
+                              <td className="px-6 py-3 text-[#111816] dark:text-white">
+                                {item.slNo}
+                              </td>
+                              <td className="px-6 py-3 text-[#111816] dark:text-white">
+                                {item.testCode}
+                              </td>
+                              <td className="px-6 py-3 text-[#111816] dark:text-white">
+                                {item.testInformation}
+                              </td>
+                              <td className="px-6 py-3 text-right font-semibold text-[#111816] dark:text-white">
+                                ৳{item.charge.toLocaleString()}
+                              </td>
+                              <td className="px-6 py-3 text-center">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleRemoveHealthCheckup(item.id)
+                                  }
+                                  className="text-red-500 hover:text-red-700"
+                                >
+                                  <span className="material-symbols-outlined text-sm">
+                                    delete
+                                  </span>
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </section>
+            </div>
 
-              {/* Add Health Checkup Information Section */}
-              <div className="bg-white dark:bg-[#182c25] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-2">
-                <h3 className="text-xs font-semibold text-[#111816] dark:text-white mb-2">
-                  Add Health Checkup Information
-                </h3>
-                <div className="grid grid-cols-4 gap-2">
-                  <div>
-                    <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                      Health Checkup
-                    </label>
-                    <select
-                      name="healthCheckup"
-                      value={formData.healthCheckup}
-                      onChange={handleInputChange}
-                      className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                    >
-                      <option value="">Test code or name</option>
-                      {sampleHealthCheckups.map((hc) => (
-                        <option key={hc.code} value={hc.code}>
-                          {hc.code} - {hc.name}
-                        </option>
-                      ))}
-                    </select>
+            {/* Right Column - 4 columns */}
+            <div className="col-span-12 lg:col-span-4 flex flex-col gap-6">
+              <section className="bg-white dark:bg-[#182c25] rounded-xl shadow-sm border border-[#dbe6e2] dark:border-[#2a3f38] p-6 h-full flex flex-col">
+                <h2 className="text-lg font-semibold text-[#111816] dark:text-white border-l-4 border-green-500 pl-3 mb-6">
+                  Payment
+                </h2>
+                <div className="mb-6">
+                  <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                    Total Taka <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      name="totalTaka"
+                      value={formData.totalTaka || "0.00"}
+                      readOnly
+                      className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-900 text-lg font-bold text-gray-800 dark:text-white text-right pr-4"
+                    />
+                    <span className="absolute left-3 top-2.5 text-gray-400 text-sm">
+                      BDT
+                    </span>
                   </div>
-                  <div>
-                    <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                      &nbsp;
-                    </label>
-                    <button
-                      type="button"
-                      className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-gray-100 dark:bg-gray-700 px-2 py-1 text-xs text-[#111816] dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600"
-                    >
-                      Diagnosis Test Information
-                    </button>
+                </div>
+
+                {/* Discount Separator */}
+                <div className="relative py-4 flex items-center justify-center mb-4">
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 flex items-center"
+                  >
+                    <div className="w-full border-t border-dashed border-gray-300 dark:border-gray-600"></div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                      Charge
+                  <div className="relative flex justify-center">
+                    <span className="px-3 bg-white dark:bg-[#182c25] text-sm font-medium text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-full py-1 shadow-sm">
+                      Discount
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-3 mb-6">
+                  <div className="grid grid-cols-3 gap-2 items-center">
+                    <label className="text-sm text-gray-600 dark:text-gray-400">
+                      Less Amount
+                    </label>
+                    <div className="col-span-2 flex gap-2">
+                      <input
+                        type="number"
+                        value={formData.lessAmount}
+                        onChange={(e) => handleLessAmountChange(e.target.value)}
+                        className="w-2/3 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm text-right focus:border-primary focus:ring-primary dark:text-white"
+                      />
+                      <select
+                        name="lessAmountType"
+                        value={formData.lessAmountType}
+                        onChange={handleInputChange}
+                        className="w-1/3 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
+                      >
+                        <option value="TK">TK</option>
+                        <option value="%">%</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 items-center">
+                    <label className="text-sm text-gray-600 dark:text-gray-400">
+                      Total Less
                     </label>
                     <input
                       type="number"
-                      name="charge"
-                      value={formData.charge}
-                      onChange={handleInputChange}
-                      placeholder="Charge"
-                      className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-sm text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
+                      name="totalLessAmount"
+                      value={formData.totalLessAmount}
+                      readOnly
+                      disabled
+                      className="col-span-2 rounded-md border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900 text-sm text-right text-gray-500"
                     />
                   </div>
-                  <div>
-                    <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                      &nbsp;
+                  <div className="grid grid-cols-3 gap-2 items-center">
+                    <label className="text-sm text-gray-600 dark:text-gray-400">
+                      From
                     </label>
-                    <button
-                      type="button"
-                      onClick={handleAddHealthCheckup}
-                      className="w-full px-3 py-1 bg-primary text-background-dark text-xs font-medium rounded hover:opacity-90 transition-opacity"
+                    <select
+                      name="discountFrom"
+                      value={formData.discountFrom}
+                      onChange={handleInputChange}
+                      className="col-span-2 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
                     >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
-                {/* Investigation Information Table */}
-                <div className="lg:col-span-2">
-                  <div className="bg-white dark:bg-[#182c25] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm overflow-hidden">
-                    <h3 className="text-xs font-semibold text-[#111816] dark:text-white p-2 border-b border-[#dbe6e2] dark:border-[#2a3f38]">
-                      Investigation Information
-                    </h3>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-xs">
-                        <thead className="bg-[#f0f4f3] dark:bg-[#2a3f38]">
-                          <tr>
-                            <th className="px-2 py-1 text-left text-xs font-medium text-[#111816] dark:text-white uppercase">
-                              SL No.
-                            </th>
-                            <th className="px-2 py-1 text-left text-xs font-medium text-[#111816] dark:text-white uppercase">
-                              Test Code
-                            </th>
-                            <th className="px-2 py-1 text-left text-xs font-medium text-[#111816] dark:text-white uppercase">
-                              Test Information
-                            </th>
-                            <th className="px-2 py-1 text-left text-xs font-medium text-[#111816] dark:text-white uppercase">
-                              Charge
-                            </th>
-                            <th className="px-2 py-1 text-left text-xs font-medium text-[#111816] dark:text-white uppercase">
-                              Action
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-[#dbe6e2] dark:divide-[#2a3f38]">
-                          {healthCheckupList.length === 0 ? (
-                            <tr>
-                              <td colSpan={5} className="px-2 py-4 text-center text-[#61897c] dark:text-gray-400 text-xs">
-                                No health checkup added yet
-                              </td>
-                            </tr>
-                          ) : (
-                            healthCheckupList.map((item) => (
-                              <tr key={item.id} className="hover:bg-[#f0f4f3] dark:hover:bg-[#2a3f38]">
-                                <td className="px-2 py-1 text-xs text-[#111816] dark:text-white">
-                                  {item.slNo}
-                                </td>
-                                <td className="px-2 py-1 text-xs text-[#111816] dark:text-white">
-                                  {item.testCode}
-                                </td>
-                                <td className="px-2 py-1 text-xs text-[#111816] dark:text-white">
-                                  {item.testInformation}
-                                </td>
-                                <td className="px-2 py-1 text-xs font-semibold text-[#111816] dark:text-white">
-                                  ৳{item.charge.toLocaleString()}
-                                </td>
-                                <td className="px-2 py-1">
-                                  <button
-                                    type="button"
-                                    onClick={() => handleRemoveHealthCheckup(item.id)}
-                                    className="text-red-500 hover:text-red-700"
-                                  >
-                                    <span className="material-symbols-outlined text-xs">delete</span>
-                                  </button>
-                                </td>
-                              </tr>
-                            ))
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
+                      <option value="">Select Authorizer</option>
+                      <option value="Hospital">Hospital</option>
+                      <option value="Doctor">Doctor</option>
+                      <option value="Corporate">Corporate</option>
+                    </select>
                   </div>
                 </div>
 
-                {/* Payment Section */}
-                <div className="space-y-2">
-                  <div className="bg-white dark:bg-[#182c25] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-2">
-                    <h3 className="text-xs font-semibold text-[#111816] dark:text-white mb-2">
-                      Payment Details
-                    </h3>
-                    <div className="space-y-2">
-                      <div>
-                        <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                          Total Taka <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="number"
-                          name="totalTaka"
-                          value={formData.totalTaka}
-                          onChange={handleInputChange}
-                          placeholder="Total Taka"
-                          readOnly
-                          className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-gray-50 dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white"
-                        />
-                      </div>
+                {/* Collection Separator */}
+                <div className="relative py-4 flex items-center justify-center mb-4">
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 flex items-center"
+                  >
+                    <div className="w-full border-t border-dashed border-gray-300 dark:border-gray-600"></div>
+                  </div>
+                  <div className="relative flex justify-center">
+                    <span className="px-3 bg-white dark:bg-[#182c25] text-sm font-medium text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-full py-1 shadow-sm">
+                      Collection
+                    </span>
+                  </div>
+                </div>
 
-                      <div className="border-t border-[#dbe6e2] dark:border-[#2a3f38] pt-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <button
-                            type="button"
-                            className="text-xs font-medium text-[#111816] dark:text-white px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
-                          >
-                            Discount
-                          </button>
-                          <label className="flex items-center gap-1 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={showLessAmount}
-                              onChange={(e) => setShowLessAmount(e.target.checked)}
-                              className="rounded border-[#dbe6e2] dark:border-[#2a3f38] w-3 h-3"
-                            />
-                            <span className="text-xs text-[#61897c] dark:text-gray-400">Less Amount</span>
-                          </label>
-                        </div>
-                        {showLessAmount && (
-                          <div className="space-y-1">
-                            <div className="flex gap-1">
-                              <input
-                                type="number"
-                                value={formData.lessAmount}
-                                onChange={(e) => handleLessAmountChange(e.target.value)}
-                                className="flex-1 rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                              />
-                              <select
-                                name="lessAmountType"
-                                value={formData.lessAmountType}
-                                onChange={handleInputChange}
-                                className="rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                              >
-                                <option value="TK">TK</option>
-                                <option value="%">%</option>
-                              </select>
-                            </div>
-                            <div>
-                              <input
-                                type="number"
-                                name="totalLessAmount"
-                                value={formData.totalLessAmount}
-                                readOnly
-                                className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-gray-50 dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white"
-                              />
-                            </div>
-                            <div>
-                              <select
-                                name="discountFrom"
-                                value={formData.discountFrom}
-                                onChange={handleInputChange}
-                                className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                              >
-                                <option value="">From</option>
-                                <option value="Hospital">Hospital</option>
-                                <option value="Doctor">Doctor</option>
-                                <option value="Corporate">Corporate</option>
-                              </select>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                <div className="space-y-3 mb-6">
+                  <div className="grid grid-cols-3 gap-2 items-center">
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      Net Payable <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="netPayable"
+                      value={formData.netPayable || "0.00"}
+                      readOnly
+                      disabled
+                      className="col-span-2 rounded-md border-gray-300 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/20 text-sm text-right font-semibold text-gray-800 dark:text-blue-100"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 items-center">
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      Received <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      name="amountReceived"
+                      value={formData.amountReceived}
+                      onChange={(e) =>
+                        handleAmountReceivedChange(e.target.value)
+                      }
+                      className="col-span-2 rounded-md border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/10 text-sm text-right font-bold text-green-700 dark:text-green-400 focus:border-green-500 focus:ring-green-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 items-center">
+                    <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      Due Amount <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="dueAmount"
+                      value={formData.dueAmount || "0.00"}
+                      readOnly
+                      disabled
+                      className="col-span-2 rounded-md border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/10 text-sm text-right font-semibold text-red-600 dark:text-red-400"
+                    />
+                  </div>
+                </div>
 
-                      <div className="border-t border-[#dbe6e2] dark:border-[#2a3f38] pt-1">
-                        <button
-                          type="button"
-                          className="text-xs font-medium text-[#111816] dark:text-white px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
-                        >
-                          Collection
-                        </button>
-                      </div>
+                {/* Delivery Separator */}
+                <div className="relative py-4 flex items-center justify-center mb-4">
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 flex items-center"
+                  >
+                    <div className="w-full border-t border-dashed border-gray-300 dark:border-gray-600"></div>
+                  </div>
+                  <div className="relative flex justify-center">
+                    <span className="px-3 bg-white dark:bg-[#182c25] text-sm font-medium text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 rounded-full py-1 shadow-sm">
+                      Delivery
+                    </span>
+                  </div>
+                </div>
 
-                      <div>
-                        <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                          Net Payable <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="number"
-                          name="netPayable"
-                          value={formData.netPayable}
-                          readOnly
-                          className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-gray-50 dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                          Amount Received <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="number"
-                          name="amountReceived"
-                          value={formData.amountReceived}
-                          onChange={(e) => handleAmountReceivedChange(e.target.value)}
-                          className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                          Due Amount <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="number"
-                          name="dueAmount"
-                          value={formData.dueAmount}
-                          readOnly
-                          className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-gray-50 dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white"
-                        />
-                      </div>
+                <div className="space-y-4 mb-6">
+                  <div className="flex gap-2">
+                    <div className="w-1/2">
+                      <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+                        Date
+                      </label>
+                      <input
+                        type="date"
+                        name="deliveryDate"
+                        value={formData.deliveryDate}
+                        onChange={handleInputChange}
+                        className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
+                      />
+                    </div>
+                    <div className="w-1/2">
+                      <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+                        Time
+                      </label>
+                      <input
+                        type="time"
+                        name="deliveryTime"
+                        value={formData.deliveryTime}
+                        onChange={handleInputChange}
+                        className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
+                      />
                     </div>
                   </div>
-
-                  {/* Delivery Details */}
-                  <div className="bg-white dark:bg-[#182c25] rounded-lg border border-[#dbe6e2] dark:border-[#2a3f38] shadow-sm p-2">
-                    <div className="border-b border-[#dbe6e2] dark:border-[#2a3f38] pb-1 mb-2">
-                      <button
-                        type="button"
-                        className="text-xs font-medium text-[#111816] dark:text-white px-2 py-1 rounded bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
-                      >
-                        Delivery
-                      </button>
+                  <div>
+                    <input
+                      type="text"
+                      name="referencedBy"
+                      value={formData.referencedBy}
+                      onChange={handleInputChange}
+                      placeholder="Referenced By"
+                      className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white mb-2"
+                    />
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        name="referencedCode"
+                        value={formData.referencedCode}
+                        onChange={handleInputChange}
+                        placeholder="Ref. Code"
+                        className="w-1/3 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
+                      />
+                      <input
+                        type="text"
+                        name="referencedNameField"
+                        value={formData.referencedNameField}
+                        onChange={handleInputChange}
+                        placeholder="Referenced Name"
+                        className="w-2/3 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white"
+                      />
                     </div>
-                    <div className="space-y-2">
-                      <div className="grid grid-cols-2 gap-1">
-                        <div>
-                          <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                            Delivery Date
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="date"
-                              name="deliveryDate"
-                              value={formData.deliveryDate}
-                              onChange={handleInputChange}
-                              className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                            />
-                            <span className="material-symbols-outlined absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs">
-                              calendar_today
-                            </span>
-                          </div>
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                            Time
-                          </label>
-                          <div className="relative">
-                            <input
-                              type="time"
-                              name="deliveryTime"
-                              value={formData.deliveryTime}
-                              onChange={handleInputChange}
-                              className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                            />
-                            <span className="material-symbols-outlined absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs">
-                              schedule
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                          Referenced By
-                        </label>
-                        <input
-                          type="text"
-                          name="referencedBy"
-                          value={formData.referencedBy}
-                          onChange={handleInputChange}
-                          placeholder="Referenced By"
-                          className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-1">
-                        <div>
-                          <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                            Referenced Code
-                          </label>
-                          <input
-                            type="text"
-                            name="referencedCode"
-                            value={formData.referencedCode}
-                            onChange={handleInputChange}
-                            placeholder="Code"
-                            className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                            Referenced Name
-                          </label>
-                          <input
-                            type="text"
-                            name="referencedNameField"
-                            value={formData.referencedNameField}
-                            onChange={handleInputChange}
-                            placeholder="Name"
-                            className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-[#111816] dark:text-white mb-0.5">
-                          Remarks
-                        </label>
-                        <textarea
-                          name="remarks"
-                          value={formData.remarks}
-                          onChange={handleInputChange}
-                          rows={2}
-                          className="w-full rounded border border-[#dbe6e2] dark:border-[#2a3f38] bg-white dark:bg-[#2a3f38] px-2 py-1 text-xs text-[#111816] dark:text-white focus:ring-1 focus:ring-primary focus:border-primary"
-                        />
-                      </div>
-                      <div className="flex items-center gap-1">
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
+                      Remarks
+                    </label>
+                    <textarea
+                      name="remarks"
+                      value={formData.remarks}
+                      onChange={handleInputChange}
+                      rows={2}
+                      className="w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:border-primary focus:ring-primary dark:text-white resize-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-auto space-y-4 pt-4 border-t border-dashed border-gray-300 dark:border-gray-600">
+                  <div className="flex items-center">
+                    <label className="inline-flex items-center cursor-pointer">
+                      <div className="relative">
                         <input
                           type="checkbox"
                           name="urgent"
                           checked={formData.urgent}
                           onChange={handleInputChange}
-                          className="rounded border-[#dbe6e2] dark:border-[#2a3f38] w-3 h-3"
+                          className="sr-only peer"
                         />
-                        <label className="text-xs font-medium text-[#111816] dark:text-white">
-                          Urgent
-                        </label>
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 dark:peer-focus:ring-red-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-500"></div>
                       </div>
-                    </div>
+                      <span className="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        Mark as Urgent
+                      </span>
+                    </label>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={handleRePrint}
+                      className="flex items-center justify-center gap-2 bg-sky-500 hover:bg-sky-600 text-white font-medium py-2.5 px-4 rounded-lg shadow-md transition-all"
+                    >
+                      <span className="material-symbols-outlined text-sm">
+                        print
+                      </span>
+                      Re Print
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSaveAndPrint}
+                      className="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-medium py-2.5 px-4 rounded-lg shadow-md shadow-green-500/20 transition-all"
+                    >
+                      <span className="material-symbols-outlined text-sm">
+                        save
+                      </span>
+                      Save & Print
+                    </button>
                   </div>
                 </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={handleRePrint}
-                  className="flex items-center gap-1 px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-sm">error</span>
-                  <span>Re Print</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSaveAndPrint}
-                  className="flex items-center gap-1 px-4 py-1.5 bg-green-600 text-white text-xs font-bold rounded hover:bg-green-700 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-sm">check</span>
-                  <span>Save & Print</span>
-                </button>
-              </div>
-            </form>
+              </section>
+            </div>
           </div>
         </div>
       </main>
     </div>
   );
 }
-
